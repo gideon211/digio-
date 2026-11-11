@@ -2,7 +2,9 @@
   "compilerOptions": {
     "module": "commonjs",
     "target": "ES2023",
-    "lib": ["ES2023"],
+    "lib": [
+      "ES2023"
+    ],
     "moduleResolution": "node",
     "declaration": false,
     "removeComments": true,
@@ -22,8 +24,15 @@
     "noUnusedParameters": true,
     "noFallthroughCasesInSwitch": true,
     "forceConsistentCasingInFileNames": true,
-    "resolveJsonModule": true
+    "resolveJsonModule": true,
+    "rootDir": "./src"
   },
-  "include": ["src/**/*", "test/**/*", "drizzle.config.ts"],
-  "exclude": ["node_modules", "dist"]
+  "include": [
+    "src/**/*",
+    "test/**/*"
+  ],
+  "exclude": [
+    "node_modules",
+    "dist"
+  ]
 }
