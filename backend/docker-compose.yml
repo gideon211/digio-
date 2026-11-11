@@ -1,0 +1,42 @@
+services:
+  postgres:
+    image: postgis/postgis:16-3.4
+    container_name: digio-postgres
+    environment:
+      POSTGRES_USER: digio
+      POSTGRES_PASSWORD: digio_dev
+      POSTGRES_DB: digio
+    ports:
+      - "5434:5432"
+    volumes:
+      - digio-pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U digio -d digio"]
+      interval: 5s
+      timeout: 3s
+      retries: 20
+
+  redis:
+    image: redis:7-alpine
+    container_name: digio-redis
+    command: ["redis-server", "--appendonly", "no"]
+    ports:
+      - "6380:6379"
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 3s
+      retries: 20
+
+  # OSRM is not started by default: it needs the Ghana OSM extract prepared
+  # once with osrm-extract / osrm-partition / osrm-customize. See infra/osrm.md.
+  # osrm:
+  #   image: osrm/osrm-backend
+  #   command: osrm-routed --algorithm mld /data/ghana-latest.osrm
+  #   volumes:
+  #     - ./infra/osrm-data:/data
+  #   ports:
+  #     - "5000:5000"
+
+volumes:
+  digio-pgdata:
