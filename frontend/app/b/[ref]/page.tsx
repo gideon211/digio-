@@ -34,7 +34,7 @@ export default async function ManageBookingPage({
   const rental = booking.rental;
 
   return (
-    <main className="app-shell pt-6 pb-4">
+    <main className="app-shell pt-6 pb-16 md:pb-24">
       <div className="stack grid gap-4">
         {/* ── Status ── */}
         <section className="band-dark on-dark p-6">

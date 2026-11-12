@@ -244,7 +244,7 @@ function BookForm() {
   const selected = prices?.find((price) => price.classSlug === classSlug) ?? null;
 
   return (
-    <main className="app-shell pt-6 pb-4">
+    <main className="app-shell pt-6 pb-16 md:pb-24">
       <div className="stack">
         <StepRibbon steps={BOOK_STEPS} activeKey={step} />
 

@@ -636,6 +636,15 @@
     position: relative;
   }
 
+  /*
+   * Real vehicle photography. Three photographs, taken in three cities, under
+   * three different skies — pulled toward one tone so they read as one fleet
+   * rather than three stock images. Light touch: the cars are already black.
+   */
+  .fleet-photo {
+    filter: saturate(0.9) contrast(1.05) brightness(0.94);
+  }
+
   /* ── Tabs: fleet class selector on a dark band ────────────── */
   .tab-row {
     display: flex;

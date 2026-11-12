@@ -19,7 +19,7 @@ const AREAS = [
 
 export function SiteFooter() {
   return (
-    <footer className="on-dark mt-20 bg-forest text-hero-ink">
+    <footer className="on-dark border-t border-white/10 bg-forest text-hero-ink">
       <div className="app-shell py-14 md:py-16">
         <div className="grid gap-10 md:grid-cols-2 lg:grid-cols-[1.4fr_0.8fr_1fr_1.1fr]">
           <div>
@@ -93,7 +93,12 @@ export function SiteFooter() {
 
         <div className="mt-12 flex flex-col gap-2 border-t border-white/15 pt-6 text-caption text-hero-ink/55 sm:flex-row sm:items-center sm:justify-between">
           <span>© {new Date().getFullYear()} Digio · Accra, Ghana</span>
-          <span>Prices in GH₵ · Deposits by mobile money or card, secured by Paystack</span>
+          <span className="flex flex-wrap gap-x-4 gap-y-1">
+            <span>Prices in GH₵ · Deposits secured by Paystack</span>
+            <Link href="/credits" className="underline-offset-4 hover:text-hero-ink hover:underline">
+              Image credits
+            </Link>
+          </span>
         </div>
       </div>
     </footer>

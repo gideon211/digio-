@@ -271,7 +271,7 @@ export default async function HomePage() {
       </section>
 
       {/* ── Closing ──────────────────────────────────────────── */}
-      <section className="band band-full on-dark relative overflow-hidden">
+      <section className="band band-full on-dark relative overflow-hidden pt-24 lg:pt-36">
         <RouteArt uid="cta" className="opacity-80" />
 
         <div className="app-shell relative">

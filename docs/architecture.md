@@ -212,6 +212,14 @@ rather than inventing a new decoration per section. It is decorative and inert �
 no pointer events, no text, no behaviour — and the page reads the same without
 it.
 
+**Fleet photography** lives in `public/fleet/` at 2000×1125, one 16:9 crop per
+class, sourced from Wikimedia Commons. Two are CC0; the HiAce is CC BY-SA 4.0,
+so its author is credited on `/credits` and linked in the footer. Sources,
+licences and the processing recipe are in `public/fleet/CREDITS.md`. A light
+treatment (`.fleet-photo`) plus the band scrim pulls three photographs taken in
+three cities toward one tone; the illustration set remains as the fallback if an
+image fails to load.
+
 Pages:
 
 - `/` — five acts: the price (hero fare board and the published fare list), the
@@ -224,6 +232,7 @@ Pages:
 - `/rent` — two steps: car (dates, class, delivery, extras) → confirm.
 - `/b/[ref]` — status, details, security hold, payment history, resume or cancel.
 - `/book/return` — polls the payment until Paystack's webhook lands.
+- `/credits` — sources and licences for the fleet photography.
 
 The client never computes a price. Every figure on screen is a number the API
 returned.

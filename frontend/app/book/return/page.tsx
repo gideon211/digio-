@@ -145,7 +145,7 @@ function Shell({
   children: React.ReactNode;
 }) {
   return (
-    <main className="app-shell pt-6 pb-4">
+    <main className="app-shell pt-6 pb-16 md:pb-24">
       <div className="stack">
         <section className="form-card">
           <p className="eyebrow">Payment</p>

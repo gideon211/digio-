@@ -1,5 +1,6 @@
 'use client';
 
+import Image from 'next/image';
 import Link from 'next/link';
 import { useState } from 'react';
 import { carKindFor, CarProfile } from './car-art';
@@ -24,6 +25,7 @@ const short = (name: string) => name.replace('Executive ', '').replace('Premium 
  */
 export function FleetBand({ classes }: { classes: VehicleClass[] }) {
   const [slug, setSlug] = useState(classes[0]?.slug ?? '');
+  const [failed, setFailed] = useState<Record<string, boolean>>({});
   const current = classes.find((entry) => entry.slug === slug) ?? classes[0];
 
   if (!current) return null;
@@ -35,16 +37,36 @@ export function FleetBand({ classes }: { classes: VehicleClass[] }) {
       <div className="app-shell">
         <div className="grid gap-8 lg:grid-cols-[1.05fr_0.95fr] lg:items-center lg:gap-14">
           {/* ── The stage ── */}
-          <div className="stage">
-            <CarProfile kind={kind} className="mx-auto max-w-[400px]" />
-            <div className="mt-4 flex flex-wrap items-end justify-between gap-3 border-t border-white/15 pt-4">
-              <div>
-                <p className="font-display text-display-sm text-hero-ink">{current.name}</p>
-                <p className="mt-0.5 text-caption text-hero-ink/70">{current.description}</p>
-              </div>
-              <span className="chip chip-on-dark">{current.availableVehicles} in the fleet</span>
+          <figure className="stage m-0">
+            <div className="relative aspect-[16/9] w-full overflow-hidden rounded-[12px] border border-white/10 bg-forest-deep">
+              {failed[current.slug] ? (
+                <CarProfile kind={kind} className="absolute inset-0 h-full w-full p-5" />
+              ) : (
+                <Image
+                  src={`/fleet/${current.slug}.jpg`}
+                  alt=""
+                  fill
+                  sizes="(min-width: 1024px) 44vw, 100vw"
+                  className="fleet-photo object-cover"
+                  onError={() => setFailed((prev) => ({ ...prev, [current.slug]: true }))}
+                />
+              )}
+
+              {/* Scrim so the chip has something to sit on, whatever the sky did. */}
+              <div
+                aria-hidden
+                className="absolute inset-0 bg-gradient-to-t from-night/75 via-night/10 to-transparent"
+              />
+              <span className="absolute left-3 top-3 rounded-pill border border-white/20 bg-night/70 px-3 py-1.5 text-caption text-hero-ink backdrop-blur-sm">
+                {current.availableVehicles} in the fleet
+              </span>
             </div>
-          </div>
+
+            <figcaption className="mt-4 border-t border-white/15 pt-4">
+              <p className="font-display text-display-sm text-hero-ink">{current.name}</p>
+              <p className="mt-0.5 text-caption text-hero-ink/70">{current.description}</p>
+            </figcaption>
+          </figure>
 
           {/* ── The spec ── */}
           <div>

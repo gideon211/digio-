@@ -193,7 +193,7 @@ export default function RentPage() {
   }
 
   return (
-    <main className="app-shell pt-6 pb-4">
+    <main className="app-shell pt-6 pb-16 md:pb-24">
       <div className="stack">
         <StepRibbon steps={RENT_STEPS} activeKey={step} />
 
