@@ -547,7 +547,7 @@ function CarsStep(props: {
                       ? 'Fully booked for this slot'
                       : tooSmall
                         ? `Seats ${price.seats} — too small for ${props.passengers}`
-                        : `${price.seats} seats · ${price.bags} bags · ${price.availableVehicles} free`}
+                        : `${price.seats} seats · ${price.bags} bags · ${price.availableVehicles} in the fleet`}
                   </span>
                 </span>
                 <span className="shrink-0 text-right">

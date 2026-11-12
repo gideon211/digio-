@@ -3,7 +3,7 @@
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 import { Field } from './field';
-import type { Zone } from '@/lib/api';
+import { type FareList, formatGhs, type Zone } from '@/lib/api';
 
 function shift(days: number): string {
   const date = new Date();
@@ -14,8 +14,13 @@ function shift(days: number): string {
 /**
  * The hero request form. It only collects what the price actually depends on
  * and hands the rest to /book — no pricing happens here.
+ *
+ * It also shows what the trip will cost. The numbers are the published airport
+ * fares, fetched on the server with the page, so the form can answer "roughly
+ * how much?" before a customer commits to anything — and answer it with the
+ * same engine that will eventually charge them.
  */
-export function HomeRequest({ zones }: { zones: Zone[] }) {
+export function HomeRequest({ zones, fares }: { zones: Zone[]; fares: FareList | null }) {
   const router = useRouter();
   const [destination, setDestination] = useState('');
   const [date, setDate] = useState(shift(1));
@@ -24,6 +29,9 @@ export function HomeRequest({ zones }: { zones: Zone[] }) {
 
   const selected = destination || zones.find((zone) => !zone.airport)?.slug || zones[0]?.slug || '';
   const ready = zones.length > 0;
+
+  const route = fares?.routes.find((entry) => entry.zoneSlug === selected) ?? null;
+  const zone = zones.find((entry) => entry.slug === selected) ?? null;
 
   function start(event: React.FormEvent) {
     event.preventDefault();
@@ -48,9 +56,9 @@ export function HomeRequest({ zones }: { zones: Zone[] }) {
             value={selected}
             onChange={(event) => setDestination(event.target.value)}
           >
-            {zones.map((zone) => (
-              <option key={zone.slug} value={zone.slug}>
-                {zone.name}
+            {zones.map((entry) => (
+              <option key={entry.slug} value={entry.slug}>
+                {entry.name}
               </option>
             ))}
           </select>
@@ -90,6 +98,33 @@ export function HomeRequest({ zones }: { zones: Zone[] }) {
           </select>
         </Field>
       </div>
+
+      {/* Live fare board: three classes, one route, published prices. */}
+      {route && zone ? (
+        <div className="mt-4 rounded-md bg-sunken px-3 py-3" aria-live="polite">
+          <div className="flex flex-wrap items-baseline justify-between gap-x-3">
+            <span className="eyebrow">Airport fare</span>
+            <span className="text-caption text-muted">
+              Kotoka → {zone.name} · one way, tolls in
+            </span>
+          </div>
+          <div className="mt-2 grid grid-cols-3 gap-2">
+            {route.prices.map((price) => (
+              <div
+                key={price.classSlug}
+                className="rounded-[10px] border border-line bg-raised px-2.5 py-2"
+              >
+                <span className="block truncate text-caption text-muted">
+                  {price.className.replace('Executive ', '').replace('Premium ', '')}
+                </span>
+                <span className="tabular mt-0.5 block font-display text-body-md font-semibold text-ink">
+                  {formatGhs(price.pricePesewas)}
+                </span>
+              </div>
+            ))}
+          </div>
+        </div>
+      ) : null}
 
       <button className="btn btn-primary mt-4" type="submit" disabled={!ready}>
         {ready ? 'See cars and prices' : 'Loading the fleet…'}

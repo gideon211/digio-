@@ -1,47 +1,51 @@
 import Link from 'next/link';
 import { Brand } from './brand';
 
-const BOOKING_LINKS = [
+const BOOK_LINKS = [
   { href: '/book', label: 'Airport transfers' },
   { href: '/book', label: 'Chauffeur hire' },
   { href: '/rent', label: 'Self-drive rentals' },
+  { href: '/#fares', label: 'Published fares' },
 ] as const;
 
-const HOW_IT_WORKS = [
-  '30% deposit confirms the booking',
-  'Balance settled at handover',
-  'Confirmation by WhatsApp and SMS',
+const AREAS = [
+  'Kotoka International Airport',
+  'Airport City & Cantonments',
+  'Labone, Osu & Labadi',
+  'East Legon & Dzorwulu',
+  'Ridge & Spintex',
+  'Tema',
 ] as const;
 
 export function SiteFooter() {
   return (
-    <footer className="on-dark mt-16 bg-forest text-hero-ink">
-      <div className="app-shell py-12 md:py-16">
-        <div className="grid gap-10 md:grid-cols-2 lg:grid-cols-[1.5fr_1fr_1fr]">
+    <footer className="on-dark mt-20 bg-forest text-hero-ink">
+      <div className="app-shell py-14 md:py-16">
+        <div className="grid gap-10 md:grid-cols-2 lg:grid-cols-[1.4fr_0.8fr_1fr_1.1fr]">
           <div>
-            <span className="font-display text-xl font-bold text-hero-ink">
-              Digio<span className="text-gold">.</span>
-            </span>
-            <p className="mt-3 max-w-xs text-body-sm text-hero-ink/70">
-              Accra, Ghana. Late-model cars, vetted chauffeurs, one fixed price — no surge.
+            <Brand />
+            <p className="mt-4 max-w-xs text-body-sm text-hero-ink/70">
+              Late-model cars, vetted chauffeurs and one fixed price — no surge, ever.
             </p>
             <ul className="mt-5 flex flex-wrap gap-2">
-              {['Cold AC', 'Bottled water', 'Chargers', 'Flight tracking'].map((perk) => (
-                <li key={perk} className="chip chip-on-dark">
-                  {perk}
+              {['Paystack', 'Mobile money', 'Card'].map((mark) => (
+                <li key={mark} className="chip chip-on-dark">
+                  {mark}
                 </li>
               ))}
             </ul>
           </div>
 
           <nav aria-label="Book">
-            <h2 className="text-body-sm font-semibold text-hero-ink">Book</h2>
+            <h2 className="text-caption font-semibold uppercase tracking-[0.1em] text-hero-ink/60">
+              Book
+            </h2>
             <ul className="mt-4 grid gap-3">
-              {BOOKING_LINKS.map((link) => (
+              {BOOK_LINKS.map((link) => (
                 <li key={link.label}>
                   <Link
                     href={link.href}
-                    className="text-body-sm text-hero-ink/70 underline-offset-4 hover:text-hero-ink hover:underline"
+                    className="text-body-sm text-hero-ink/75 underline-offset-4 transition-colors hover:text-hero-ink hover:underline"
                   >
                     {link.label}
                   </Link>
@@ -51,18 +55,45 @@ export function SiteFooter() {
           </nav>
 
           <div>
-            <h2 className="text-body-sm font-semibold text-hero-ink">How it works</h2>
-            <ul className="mt-4 grid gap-3 text-body-sm text-hero-ink/70">
-              {HOW_IT_WORKS.map((line) => (
-                <li key={line}>{line}</li>
+            <h2 className="text-caption font-semibold uppercase tracking-[0.1em] text-hero-ink/60">
+              We drive
+            </h2>
+            <ul className="mt-4 grid gap-3 text-body-sm text-hero-ink/75">
+              {AREAS.map((area) => (
+                <li key={area}>{area}</li>
               ))}
             </ul>
+            <p className="mt-4 text-caption text-hero-ink/55">Plus anywhere within about 40 km.</p>
+          </div>
+
+          <div>
+            <h2 className="text-caption font-semibold uppercase tracking-[0.1em] text-hero-ink/60">
+              Managing a booking
+            </h2>
+            <p className="mt-4 text-body-sm text-hero-ink/75">
+              Your booking link arrives by WhatsApp and SMS the moment the deposit clears. Reply there
+              to change anything — a person answers.
+            </p>
+            <div className="mt-4 flex flex-wrap gap-x-5 gap-y-2">
+              <Link
+                href="/#faq"
+                className="text-body-sm text-hero-ink/75 underline-offset-4 hover:text-hero-ink hover:underline"
+              >
+                Questions
+              </Link>
+              <Link
+                href="/#enquire"
+                className="text-body-sm text-hero-ink/75 underline-offset-4 hover:text-hero-ink hover:underline"
+              >
+                Send an enquiry
+              </Link>
+            </div>
           </div>
         </div>
 
-        <div className="mt-10 flex flex-col gap-2 border-t border-white/15 pt-6 text-caption text-hero-ink/55 sm:flex-row sm:items-center sm:justify-between">
-          <span>© {new Date().getFullYear()} Digio · Accra</span>
-          <span>Prices in GH₵ · Prototype build</span>
+        <div className="mt-12 flex flex-col gap-2 border-t border-white/15 pt-6 text-caption text-hero-ink/55 sm:flex-row sm:items-center sm:justify-between">
+          <span>© {new Date().getFullYear()} Digio · Accra, Ghana</span>
+          <span>Prices in GH₵ · Deposits by mobile money or card, secured by Paystack</span>
         </div>
       </div>
     </footer>

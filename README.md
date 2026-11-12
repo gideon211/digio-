@@ -57,8 +57,10 @@ other local stacks.
 - Live trip tracking: driver positions on a PostGIS geography column, a route
   from OSRM with an offline fallback, and an SSE stream that closes itself when
   the trip finishes
-- Marketing home, three-step booking, two-step rental, manage and payment-result
-  screens on one design system, responsive from 390 px to 1280 px
+- A homepage built to sell: a branded route motif in the hero with a live
+  airport fare board, the published fare list, a fleet band with both rates,
+  how it works, a live-tracking preview, enquiries, FAQ and a full footer —
+  responsive from 390 px to 1280 px
 
 ## Not built yet
 

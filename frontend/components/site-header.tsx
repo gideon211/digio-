@@ -4,9 +4,14 @@ import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { Brand } from './brand';
 
+/**
+ * Three links and one action. The header is not the place for the whole site
+ * map — a booking platform should look like it wants you to book.
+ */
 const LINKS = [
-  { href: '/book', label: 'Book a ride' },
+  { href: '/#fares', label: 'Fares' },
   { href: '/rent', label: 'Hire a car' },
+  { href: '/#how', label: 'How it works' },
 ] as const;
 
 export function SiteHeader() {
@@ -14,10 +19,10 @@ export function SiteHeader() {
 
   return (
     <header className="sticky top-0 z-40 border-b border-line bg-surface/90 backdrop-blur-md">
-      <div className="app-shell flex h-16 items-center justify-between gap-6 md:h-18">
+      <div className="app-shell flex h-16 items-center justify-between gap-4 md:h-18">
         <Brand />
 
-        <nav aria-label="Primary">
+        <nav aria-label="Primary" className="hidden md:block">
           <ul className="flex items-center gap-1">
             {LINKS.map((link) => {
               const active = pathname === link.href || pathname.startsWith(`${link.href}/`);
@@ -45,6 +50,10 @@ export function SiteHeader() {
             })}
           </ul>
         </nav>
+
+        <Link href="/book" className="btn btn-primary btn-sm w-auto">
+          Book a ride
+        </Link>
       </div>
     </header>
   );

@@ -12,22 +12,28 @@
  * prestige, everything else is neutral. No fourth colour.
  */
 @theme {
-  /* ── Surfaces ─────────────────────────────────────────────── */
-  --color-surface: #eef1ec;
+  /* ── Surfaces ───────────────────────────────────────────────
+   * Warm neutrals against forest and gold. A cool grey page makes gold read
+   * muddy; a warm one makes it read like brass. Everything neutral carries a
+   * trace of yellow so the brand colour sits in the same family.
+   */
+  --color-surface: #f4f1e9;
   --color-raised: #ffffff;
-  --color-sunken: #e6eae4;
+  --color-sunken: #eae6dc;
   --color-ink: #16211b;
   --color-muted: #5e6b63;
   --color-faint: #8b968f;
-  --color-line: #d5dbd3;
-  --color-line-strong: #b9c3ba;
+  --color-line: #ddd8ca;
+  --color-line-strong: #c3bdaa;
 
   /* ── Brand ────────────────────────────────────────────────── */
   --color-forest: #0f3d2e;
   --color-forest-deep: #0a2b21;
+  --color-night: #0a1310;
   --color-hero-ink: #f4f1e4;
   --color-gold: #b8841f;
   --color-gold-hover: #a8761a;
+  --color-gold-bright: #f0c169;
   --color-gold-ink: #1b1403;
   --color-gold-text: #8a6414;
   --color-gold-subtle: #f6ebcf;
@@ -44,8 +50,12 @@
   --font-display: var(--font-bricolage), ui-sans-serif, system-ui, sans-serif;
   --font-sans: var(--font-dm-sans), ui-sans-serif, system-ui, sans-serif;
 
-  --text-display-2xl: 44px;
-  --text-display-2xl--line-height: 50px;
+  /* Display sizes run fluid so a headline lands at 76px on a laptop and 44px
+   * on a phone without a breakpoint jump between the two. */
+  --text-display-3xl: clamp(44px, 6.4vw, 76px);
+  --text-display-3xl--line-height: 1;
+  --text-display-2xl: clamp(30px, 3.6vw, 52px);
+  --text-display-2xl--line-height: 1.05;
   --text-display-xl: 36px;
   --text-display-xl--line-height: 42px;
   --text-display-lg: 32px;
@@ -56,13 +66,17 @@
   --text-display-sm--line-height: 26px;
 
   --text-body-lg: 18px;
-  --text-body-lg--line-height: 26px;
+  --text-body-lg--line-height: 28px;
   --text-body-md: 16px;
   --text-body-md--line-height: 24px;
   --text-body-sm: 14px;
   --text-body-sm--line-height: 20px;
   --text-caption: 12px;
   --text-caption--line-height: 18px;
+
+  /* Lead paragraphs breathe further than UI copy. */
+  --text-lead: 18px;
+  --text-lead--line-height: 30px;
 
   /* ── Radius ───────────────────────────────────────────────── */
   --radius-pill: 999px;
@@ -503,19 +517,205 @@
     opacity: 0.45;
   }
 
-  /* ── Rhythm ────────────────────────────────────────────────── */
+  /* ── Rhythm ─────────────────────────────────────────────────
+   * A marketing page needs air between ideas; a transaction page needs its
+   * columns tight. `.section` is the marketing gap, `.stack` stays the form
+   * measure. Full-bleed bands carry their own padding so the page alternates
+   * cream and forest with a beat rather than running on flat for 5,000px.
+   */
   .section {
-    margin-top: 48px;
+    margin-top: 64px;
+  }
+
+  .band {
+    padding-block: 64px;
   }
 
   @media (min-width: 1024px) {
     .section {
-      margin-top: 64px;
+      margin-top: 96px;
     }
+
+    .band {
+      padding-block: 104px;
+    }
+  }
+
+  .band-night {
+    background-color: var(--color-night);
+    color: var(--color-hero-ink);
+  }
+
+  /* Full-bleed version of the dark band: same texture, no card corners. */
+  .band-full {
+    border-radius: 0;
+    background-color: var(--color-forest);
+    color: var(--color-hero-ink);
+    background-image: repeating-linear-gradient(
+      135deg,
+      rgb(184 132 31 / 0.08) 0 2px,
+      transparent 2px 16px
+    );
   }
 
   .stack-gap > * + * {
     margin-top: 12px;
+  }
+
+  /* ── Editorial furniture ───────────────────────────────────── */
+  .lead {
+    font-size: var(--text-lead);
+    line-height: var(--text-lead--line-height);
+    color: var(--color-muted);
+  }
+
+  .on-dark .lead {
+    color: rgb(244 241 228 / 0.75);
+  }
+
+  /* Index numerals: the count, not an icon. */
+  .numeral {
+    font-family: var(--font-display);
+    font-size: 13px;
+    font-weight: 700;
+    line-height: 18px;
+    letter-spacing: 0.1em;
+    color: var(--color-gold-text);
+  }
+
+  /* Headline left, one supporting sentence right. */
+  .section-head {
+    display: grid;
+    gap: 16px;
+  }
+
+  @media (min-width: 1024px) {
+    .section-head {
+      grid-template-columns: 1.1fr 0.9fr;
+      gap: 48px;
+      align-items: end;
+    }
+  }
+
+  /* ── Hero surface ─────────────────────────────────────────────
+   * The brand's own light: a warm gold source from the upper right, a second
+   * one bleeding in from the bottom left, over forest. The route artwork sits
+   * on top of it, so the gradient never flattens into a plain colour block.
+   */
+  .hero-surface {
+    position: relative;
+    overflow: hidden;
+    background-color: var(--color-forest-deep);
+    background-image:
+      radial-gradient(1000px 560px at 78% 8%, rgb(184 132 31 / 0.2), transparent 62%),
+      radial-gradient(760px 480px at -5% 100%, rgb(184 132 31 / 0.1), transparent 70%),
+      linear-gradient(145deg, #0a2b21 0%, #0f3d2e 48%, #062018 100%);
+  }
+
+  /* ── The fleet stage ──────────────────────────────────────── */
+  .stage {
+    position: relative;
+    overflow: hidden;
+    padding: 32px 24px;
+    border: 1px solid rgb(255 255 255 / 0.12);
+    border-radius: var(--radius-card);
+    background-image: linear-gradient(180deg, rgb(255 255 255 / 0.07), rgb(255 255 255 / 0.02));
+  }
+
+  /* A pool of warm light the car stands in. */
+  .stage::before {
+    content: '';
+    position: absolute;
+    inset: -35% -10% auto;
+    height: 90%;
+    background: radial-gradient(closest-side, rgb(184 132 31 / 0.3), transparent);
+    pointer-events: none;
+  }
+
+  .stage > * {
+    position: relative;
+  }
+
+  /* ── Tabs: fleet class selector on a dark band ────────────── */
+  .tab-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+
+  .tab {
+    min-height: 40px;
+    padding: 8px 18px;
+    border: 1px solid rgb(255 255 255 / 0.24);
+    border-radius: var(--radius-pill);
+    background-color: transparent;
+    color: rgb(244 241 228 / 0.72);
+    font-family: var(--font-sans);
+    font-size: 14px;
+    font-weight: 500;
+    cursor: pointer;
+    transition:
+      background-color 120ms ease,
+      border-color 120ms ease,
+      color 120ms ease;
+  }
+
+  .tab:hover {
+    border-color: rgb(255 255 255 / 0.45);
+    color: var(--color-hero-ink);
+  }
+
+  .tab[aria-pressed='true'] {
+    background-color: var(--color-gold);
+    border-color: var(--color-gold);
+    color: var(--color-gold-ink);
+    font-weight: 600;
+  }
+
+  /* ── Published fare list ───────────────────────────────────── */
+  .fare-table {
+    width: 100%;
+    border-collapse: collapse;
+  }
+
+  .fare-table th,
+  .fare-table td {
+    padding: 14px 16px;
+    text-align: left;
+  }
+
+  .fare-table thead th {
+    border-bottom: 1px solid var(--color-line-strong);
+    font-size: 12px;
+    font-weight: 600;
+    line-height: 18px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--color-muted);
+    white-space: nowrap;
+  }
+
+  .fare-table tbody tr {
+    border-bottom: 1px solid var(--color-line);
+    transition: background-color 120ms ease;
+  }
+
+  .fare-table tbody tr:hover {
+    background-color: rgb(184 132 31 / 0.07);
+  }
+
+  .fare-table td:not(:last-child),
+  .fare-table th:not(:last-child) {
+    border-right: 1px solid var(--color-line);
+  }
+
+  /* ── The tracking preview ─────────────────────────────────── */
+  .map-card {
+    position: relative;
+    overflow: hidden;
+    border: 1px solid rgb(255 255 255 / 0.14);
+    border-radius: var(--radius-card);
+    background-color: var(--color-night);
   }
 
   /*

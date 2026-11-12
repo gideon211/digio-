@@ -190,23 +190,35 @@ or type size in a component.
 
 | Rule | Value |
 | --- | --- |
-| Conversion colour | gold `#b8841f` — one primary button colour, nothing else competes |
-| Surfaces | forest `#0f3d2e` for dark bands, white for cards, cream `#eef1ec` for the page |
+| Conversion colour | gold `#b8841f` — one primary button colour, nothing else competes; `#f0c169` when it sits on forest, where the darker gold would fail contrast |
+| Surfaces | forest `#0f3d2e` for dark bands, night `#0a1310` for the tracking band, white for cards, warm cream `#f4f1e9` for the page |
 | Interactive shape | pill `999px` on every button, chip and tab |
 | Card shape | `16px`, flat by default — shadow only on the request form and dropdowns |
 | Spacing | 4px scale: 4 / 6 / 8 / 12 / 16 / 20 / 24 / 32 |
 | Type | Bricolage Grotesque 700 for display, DM Sans 400/500 for everything else |
+| Display scale | fluid — `clamp(44px, 6.4vw, 76px)` for a hero, `clamp(30px, 3.6vw, 52px)` for a section, so a headline never jumps at a breakpoint |
+| Rhythm | `.band` carries 64px (104px from `lg`) of vertical padding and alternates cream and forest, so the page has a beat instead of running flat |
 | Voice | sentence case headlines, no letter-spacing tricks |
 
-Layout is two containers: `.app-shell` (max 1120px, shared by header, page and
-footer so gutters line up) and `.stack` (max 560px) which narrows transactional
-pages so a form never stretches across a desktop. Grids run 1-up on a phone and
-3-up from `md`.
+Layout is two containers: `.app-shell` (shared by header, page and footer so
+gutters line up) and `.stack` (max 560px) which narrows transactional pages so a
+form never stretches across a desktop. Grids run 1-up on a phone and 3-up from
+`md`.
+
+**The route motif** (`components/hero-art.tsx`) is the brand's own ornament: a
+faint street grid, a few real road shapes and one gold route with a pick-up and
+a drop-off. It appears in the hero and returns in the closing call to action
+rather than inventing a new decoration per section. It is decorative and inert —
+no pointer events, no text, no behaviour — and the page reads the same without
+it.
 
 Pages:
 
-- `/` — hero band with the request form, services, fleet, how it works, a
-  polarity-flipped promo band, footer.
+- `/` — five acts: the price (hero fare board and the published fare list), the
+  car (one class at a time behind tabs, both the self-drive and the chauffeur
+  rate), how it works, where you watch it happen (the tracking preview), and
+  what to do when a calculator cannot answer you (enquiry form, FAQ, closing
+  CTA).
 - `/book` — three steps: trip → choose your car (server-priced for all three
   classes) → confirm and pay.
 - `/rent` — two steps: car (dates, class, delivery, extras) → confirm.

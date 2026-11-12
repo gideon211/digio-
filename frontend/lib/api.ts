@@ -96,6 +96,30 @@ export interface Catalog {
   rentalExtras: RentalExtra[];
 }
 
+/** One published airport fare for one class. */
+export interface FarePrice {
+  classSlug: string;
+  className: string;
+  pricePesewas: number;
+}
+
+/** One destination priced from the airport. */
+export interface FareRoute {
+  zoneSlug: string;
+  zone: string;
+  prices: FarePrice[];
+}
+
+/**
+ * The published price list from `GET /catalog/fares`. Priced by the same
+ * engine as a booking, so a number shown here and a number charged there
+ * cannot drift apart.
+ */
+export interface FareList {
+  from: string;
+  routes: FareRoute[];
+}
+
 export interface LineItem {
   code: string;
   label: string;
@@ -229,15 +253,7 @@ export const api = {
   catalog: () => request<Catalog>('/catalog'),
 
   /** Published airport price list — every city zone, every class. */
-  fares: () =>
-    request<{
-      from: string;
-      routes: {
-        zoneSlug: string;
-        zone: string;
-        prices: { classSlug: string; className: string; pricePesewas: number }[];
-      }[];
-    }>('/catalog/fares'),
+  fares: () => request<FareList>('/catalog/fares'),
 
   sendEnquiry: (input: {
     kind: 'jet' | 'yacht' | 'corporate' | 'wedding' | 'long_term';
