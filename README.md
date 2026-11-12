@@ -40,21 +40,30 @@ other local stacks.
 ## What works today
 
 - Catalog: 11 Accra zones, 3 vehicle classes, 5 seeded vehicles, 330 zone-pair prices
-- Server-owned pricing: zone pair × class multiplier + extras − promo, 30% deposit
+- Server-owned pricing: zone pair × class multiplier + extras − promo for
+  transfers, day rate × days + delivery + extras for rentals, 30% deposit
+- Address search over OpenStreetMap, reverse geocoding, and PostGIS nearest-zone
+  resolution with a 40 km service radius
+- Comparison pricing: all three classes priced on a route in one call, without
+  burning a quote
 - Quotes with a 15-minute TTL, burned atomically when a booking is created
+- Self-drive and chauffeur-day-hire rentals; double-booking prevented by a Postgres
+  exclusion constraint, and cancelling frees the car again
 - Booking references (`DG-XXXXXX`), public read and cancel
 - Deposits by mobile money or card through Paystack, with an HMAC-verified,
   replay-safe webhook and a simulated checkout for local development
 - SMS + WhatsApp confirmation through a transactional outbox, with SMS as a
   fallback only when WhatsApp does not land
-- Manage-booking page at `/b/[ref]` and payment result page at `/book/return`
-- Double-booking prevention enforced by a Postgres exclusion constraint
-- Marketing, booking, payment and manage screens wired to the live API
+- Live trip tracking: driver positions on a PostGIS geography column, a route
+  from OSRM with an offline fallback, and an SSE stream that closes itself when
+  the trip finishes
+- Marketing home, three-step booking, two-step rental, manage and payment-result
+  screens on one design system, responsive from 390 px to 1280 px
 
 ## Not built yet
 
-Refunds, self-drive rental inventory, phone OTP auth, flight tracking, dispatch
-console, driver app.
+Refunds, phone OTP auth, dispatch console, driver app. The tracking simulator
+moves cars for demo purposes until the driver app posts real positions.
 
 ## Rules the codebase enforces
 
@@ -63,3 +72,4 @@ console, driver app.
 3. Pricing is a pure function; it is never computed in a controller or the browser.
 4. Duplicate submissions cannot create duplicate bookings.
 5. Availability conflicts are rejected by the database, not by an `if` statement.
+6. A zone is resolved from coordinates on the server, never chosen by the client.

@@ -1,31 +1,38 @@
 @import 'tailwindcss';
 
 /*
- * Digio design tokens.
- * Three brand roles, deliberately: cobalt is interactive, forest is a surface,
- * gold is prestige (ratings, membership). Nothing else gets a colour.
+ * Digio design system.
+ *
+ * Structure follows a two-colour transportation system: one conversion colour
+ * (gold) for every primary action, forest for dark bands, white for cards.
+ * Every interactive element is a pill (999px); every surface is 16px. Spacing
+ * runs on a 4px scale so nothing lands on an arbitrary number.
+ *
+ * Three brand roles, deliberately: forest is a surface, gold is conversion and
+ * prestige, everything else is neutral. No fourth colour.
  */
 @theme {
-  --color-surface: #f7f6f2;
+  /* ── Surfaces ─────────────────────────────────────────────── */
+  --color-surface: #eef1ec;
   --color-raised: #ffffff;
-  --color-sunken: #edebe4;
+  --color-sunken: #e6eae4;
   --color-ink: #16211b;
   --color-muted: #5e6b63;
+  --color-faint: #8b968f;
   --color-line: #d5dbd3;
-  --color-line-field: #8e9a8d;
-  --color-line-strong: #6b7a6f;
+  --color-line-strong: #b9c3ba;
 
-  --color-brand: #2f63db;
-  --color-brand-hover: #2857c4;
-  --color-brand-subtle: #e7edfb;
-
+  /* ── Brand ────────────────────────────────────────────────── */
   --color-forest: #0f3d2e;
+  --color-forest-deep: #0a2b21;
   --color-hero-ink: #f4f1e4;
-
   --color-gold: #b8841f;
-  --color-gold-text: #9a6f1a;
+  --color-gold-hover: #a8761a;
+  --color-gold-ink: #1b1403;
+  --color-gold-text: #8a6414;
   --color-gold-subtle: #f6ebcf;
 
+  /* ── Semantic ─────────────────────────────────────────────── */
   --color-success: #2c8654;
   --color-success-bg: #e6f2ea;
   --color-warning: #9a6f1a;
@@ -33,16 +40,43 @@
   --color-danger: #b03b38;
   --color-danger-bg: #fbe9e8;
 
+  /* ── Type ─────────────────────────────────────────────────── */
   --font-display: var(--font-bricolage), ui-sans-serif, system-ui, sans-serif;
   --font-sans: var(--font-dm-sans), ui-sans-serif, system-ui, sans-serif;
 
-  --radius-chip: 8px;
-  --radius-field: 10px;
-  --radius-button: 14px;
-  --radius-card: 16px;
-  --radius-hero: 20px;
+  --text-display-2xl: 44px;
+  --text-display-2xl--line-height: 50px;
+  --text-display-xl: 36px;
+  --text-display-xl--line-height: 42px;
+  --text-display-lg: 32px;
+  --text-display-lg--line-height: 38px;
+  --text-display-md: 24px;
+  --text-display-md--line-height: 30px;
+  --text-display-sm: 20px;
+  --text-display-sm--line-height: 26px;
 
-  --breakpoint-sm: 430px;
+  --text-body-lg: 18px;
+  --text-body-lg--line-height: 26px;
+  --text-body-md: 16px;
+  --text-body-md--line-height: 24px;
+  --text-body-sm: 14px;
+  --text-body-sm--line-height: 20px;
+  --text-caption: 12px;
+  --text-caption--line-height: 18px;
+
+  /* ── Radius ───────────────────────────────────────────────── */
+  --radius-pill: 999px;
+  --radius-card: 16px;
+  --radius-md: 12px;
+  --radius-input: 8px;
+
+  /* ── Elevation: flat by default, shadow only where it means something ── */
+  --shadow-elevated: 0 4px 16px rgb(0 0 0 / 0.12);
+  --shadow-form: 0 4px 16px rgb(0 0 0 / 0.16);
+  --shadow-float: 0 2px 8px rgb(0 0 0 / 0.16);
+
+  /* ── Breakpoints ──────────────────────────────────────────── */
+  --breakpoint-sm: 480px;
   --breakpoint-md: 768px;
   --breakpoint-lg: 1024px;
   --breakpoint-xl: 1280px;
@@ -50,106 +84,429 @@
 
 @layer base {
   html {
-    scroll-padding-top: env(safe-area-inset-top, 0px);
+    scroll-padding-top: 88px;
+    -webkit-text-size-adjust: 100%;
   }
 
   body {
     background-color: var(--color-surface);
     color: var(--color-ink);
     font-family: var(--font-sans);
-    font-size: 15px;
-    line-height: 1.45;
+    font-size: 16px;
+    line-height: 24px;
     -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
   }
 
   h1,
   h2,
-  h3 {
+  h3,
+  h4 {
     font-family: var(--font-display);
+    font-weight: 700;
     letter-spacing: -0.02em;
   }
 
-  :focus-visible {
-    outline: 2px solid var(--color-brand);
-    outline-offset: 2px;
-  }
-
-  /* Prices and plates line up in columns. */
+  /* Prices, plates and dates line up in columns. */
   .tabular {
     font-variant-numeric: tabular-nums;
+  }
+
+  :focus-visible {
+    outline: 2px solid var(--color-forest);
+    outline-offset: 2px;
+    border-radius: 4px;
+  }
+
+  /* On a dark band the forest outline disappears — gold is the visible one. */
+  .on-dark :focus-visible {
+    outline-color: var(--color-gold);
+  }
+
+  ::selection {
+    background-color: var(--color-gold-subtle);
+    color: var(--color-ink);
+  }
+
+  /* FAQ disclosure markers are drawn by the component, not the browser. */
+  summary {
+    list-style: none;
+  }
+
+  summary::-webkit-details-marker {
+    display: none;
   }
 }
 
 @layer components {
+  /* ── Layout ───────────────────────────────────────────────────
+   * One container for the whole site so the header, the page and the
+   * footer share the same gutters at every breakpoint.
+   * Transactional pages narrow their content with .stack.
+   */
   .app-shell {
-    margin-inline: auto;
     width: 100%;
-    max-width: 440px;
+    max-width: 1120px;
+    margin-inline: auto;
     padding-inline: 16px;
-    padding-bottom: calc(90px + env(safe-area-inset-bottom, 0px));
   }
 
-  .btn-primary {
-    display: flex;
+  .stack {
+    width: 100%;
+    max-width: 560px;
+    margin-inline: auto;
+  }
+
+  @media (min-width: 480px) {
+    .app-shell {
+      padding-inline: 24px;
+    }
+  }
+
+  @media (min-width: 1024px) {
+    .app-shell {
+      padding-inline: 32px;
+    }
+  }
+
+  /* ── Buttons: every one of them a pill ─────────────────────── */
+  .btn {
+    display: inline-flex;
     align-items: center;
     justify-content: center;
+    gap: 8px;
     width: 100%;
     min-height: 48px;
-    padding: 14px 18px;
-    border-radius: var(--radius-button);
-    background-color: var(--color-gold);
-    color: #1b1403;
-    font-weight: 600;
+    padding: 12px 24px;
+    border: 1.5px solid transparent;
+    border-radius: var(--radius-pill);
+    font-family: var(--font-sans);
     font-size: 16px;
+    font-weight: 500;
+    line-height: 24px;
+    text-align: center;
+    cursor: pointer;
+    transition:
+      background-color 120ms ease,
+      border-color 120ms ease,
+      transform 120ms ease;
   }
 
-  .btn-primary:hover {
-    background-color: #a8761a;
+  .btn:active {
+    transform: translateY(1px);
+  }
+
+  .btn:disabled {
+    cursor: not-allowed;
+    opacity: 0.5;
+    transform: none;
+  }
+
+  /* The one conversion colour. */
+  .btn-primary {
+    background-color: var(--color-gold);
+    color: var(--color-gold-ink);
+    font-weight: 600;
+  }
+
+  .btn-primary:hover:not(:disabled) {
+    background-color: var(--color-gold-hover);
   }
 
   .btn-secondary {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    width: 100%;
-    min-height: 48px;
-    padding: 14px 18px;
-    border-radius: var(--radius-button);
-    border: 1.5px solid var(--color-line-field);
     background-color: transparent;
+    border-color: var(--color-line-strong);
     color: var(--color-ink);
-    font-weight: 600;
-    font-size: 15px;
   }
 
-  .card {
-    border-radius: var(--radius-card);
-    border: 1px solid var(--color-line);
+  .btn-secondary:hover:not(:disabled) {
+    background-color: var(--color-sunken);
+  }
+
+  .btn-dark {
+    background-color: var(--color-forest);
+    color: var(--color-hero-ink);
+  }
+
+  .btn-dark:hover:not(:disabled) {
+    background-color: var(--color-forest-deep);
+  }
+
+  .btn-on-dark {
     background-color: var(--color-raised);
-    padding: 16px;
-  }
-
-  .field {
-    width: 100%;
-    min-height: 46px;
-    padding: 11px 12px;
-    border-radius: var(--radius-field);
-    border: 1px solid var(--color-line-field);
-    background-color: var(--color-surface);
     color: var(--color-ink);
-    font: inherit;
   }
 
-  .field:focus {
-    outline: 2px solid var(--color-brand);
-    outline-offset: 1px;
-    border-color: var(--color-brand);
+  .btn-on-dark:hover:not(:disabled) {
+    background-color: var(--color-sunken);
   }
 
+  .btn-sm {
+    min-height: 40px;
+    padding: 8px 18px;
+    font-size: 14px;
+    line-height: 20px;
+  }
+
+  /* ── Surfaces ──────────────────────────────────────────────── */
+  .card {
+    background-color: var(--color-raised);
+    border: 1px solid var(--color-line);
+    border-radius: var(--radius-card);
+    padding: 20px;
+  }
+
+  .card-elevated {
+    box-shadow: var(--shadow-elevated);
+  }
+
+  /* The request form sits on the hero, so it needs to lift off it. */
+  .form-card {
+    background-color: var(--color-raised);
+    border-radius: var(--radius-card);
+    padding: 16px;
+    box-shadow: var(--shadow-form);
+  }
+
+  .band-dark {
+    background-color: var(--color-forest);
+    color: var(--color-hero-ink);
+    border-radius: var(--radius-card);
+    /* The prototype's gold hairline texture — the only decoration we allow. */
+    background-image: repeating-linear-gradient(
+      135deg,
+      rgb(184 132 31 / 0.1) 0 2px,
+      transparent 2px 14px
+    );
+  }
+
+  /* ── Fields: one filled row, label above value ───────────────
+   * The request-form pattern: no borders, no floating labels, the whole
+   * row is the target. Focus is a forest hairline on the row, not the input.
+   */
   .label {
     display: block;
     margin-bottom: 6px;
+    font-size: 14px;
+    font-weight: 500;
+    line-height: 20px;
+    color: var(--color-muted);
+  }
+
+  .field {
+    display: block;
+    width: 100%;
+    padding: 9px 16px 11px;
+    border: 1px solid transparent;
+    border-radius: var(--radius-input);
+    background-color: var(--color-sunken);
+    transition:
+      background-color 120ms ease,
+      border-color 120ms ease,
+      box-shadow 120ms ease;
+  }
+
+  .field:hover {
+    background-color: #e0e5de;
+  }
+
+  .field:focus-within {
+    background-color: var(--color-raised);
+    border-color: var(--color-forest);
+    box-shadow: 0 0 0 1px var(--color-forest);
+  }
+
+  .field-label {
+    display: block;
+    font-size: 12px;
+    font-weight: 500;
+    line-height: 16px;
+    color: var(--color-muted);
+  }
+
+  /* The value inside the row: borderless, inherits the row's rhythm. */
+  .field-control {
+    display: block;
+    width: 100%;
+    min-height: 26px;
+    margin-top: 2px;
+    padding: 0;
+    border: 0;
+    background: transparent;
+    color: var(--color-ink);
+    font-family: var(--font-sans);
+    font-size: 16px;
+    font-weight: 500;
+    line-height: 24px;
+    appearance: none;
+  }
+
+  .field-control:focus {
+    outline: none;
+  }
+
+  .field-control::placeholder {
+    color: var(--color-faint);
+    font-weight: 400;
+  }
+
+  select.field-control {
+    cursor: pointer;
+    padding-right: 24px;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8' fill='none'%3E%3Cpath d='M1 1.5 6 6.5 11 1.5' stroke='%235e6b63' stroke-width='1.75' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right center;
+  }
+
+  /* Date and time inputs keep the native picker on the right. */
+  input[type='date'].field-control,
+  input[type='time'].field-control {
+    cursor: pointer;
+  }
+
+  /* A plain single-line input with no row wrapper (promo code, name). */
+  .input {
+    width: 100%;
+    min-height: 48px;
+    padding: 11px 16px;
+    border: 1px solid transparent;
+    border-radius: var(--radius-input);
+    background-color: var(--color-sunken);
+    color: var(--color-ink);
+    font-family: var(--font-sans);
+    font-size: 16px;
+    line-height: 24px;
+  }
+
+  .input::placeholder {
+    color: var(--color-faint);
+  }
+
+  .input:focus {
+    outline: none;
+    background-color: var(--color-raised);
+    border-color: var(--color-forest);
+    box-shadow: 0 0 0 1px var(--color-forest);
+  }
+
+  /* ── Small parts ───────────────────────────────────────────── */
+  .eyebrow {
+    font-size: 12px;
+    font-weight: 600;
+    line-height: 18px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--color-muted);
+  }
+
+  .chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 5px 14px;
+    border: 1px solid var(--color-line);
+    border-radius: var(--radius-pill);
+    background-color: var(--color-sunken);
+    font-size: 13px;
+    font-weight: 500;
+    line-height: 18px;
+    color: var(--color-ink);
+  }
+
+  .chip-on-dark {
+    background-color: rgb(255 255 255 / 0.08);
+    border-color: rgb(255 255 255 / 0.22);
+    color: var(--color-hero-ink);
+  }
+
+  .chip-gold {
+    background-color: var(--color-gold-subtle);
+    border-color: #e8d3a4;
+    color: var(--color-gold-text);
+  }
+
+  /* Tab strip for Self-drive / With chauffeur — deliberately tighter than a pill. */
+  .seg {
+    display: grid;
+    gap: 4px;
+    padding: 4px;
+    border-radius: var(--radius-pill);
+    background-color: var(--color-sunken);
+  }
+
+  .seg button {
+    min-height: 44px;
+    padding: 8px 16px;
+    border: 0;
+    border-radius: var(--radius-pill);
+    background: transparent;
+    color: var(--color-muted);
+    font-family: var(--font-sans);
+    font-size: 15px;
+    font-weight: 500;
+    cursor: pointer;
+  }
+
+  .seg button[aria-pressed='true'],
+  .seg button[aria-checked='true'] {
+    background-color: var(--color-raised);
+    color: var(--color-ink);
+    box-shadow: var(--shadow-float);
+  }
+
+  .plate {
+    display: inline-block;
+    padding: 2px 10px;
+    border: 1.5px solid var(--color-ink);
+    border-radius: 6px;
     font-size: 13px;
     font-weight: 600;
+    letter-spacing: 0.06em;
+    font-variant-numeric: tabular-nums;
+  }
+
+  /* Car selection rows: the active one is outlined in gold, never filled. */
+  .option-row {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    width: 100%;
+    padding: 16px;
+    border: 1.5px solid var(--color-line);
+    border-radius: var(--radius-card);
+    background-color: var(--color-raised);
+    color: var(--color-ink);
+    text-align: left;
+    cursor: pointer;
+    transition: border-color 120ms ease;
+  }
+
+  .option-row:hover:not(:disabled) {
+    border-color: var(--color-line-strong);
+  }
+
+  .option-row[aria-checked='true'] {
+    border-color: var(--color-gold);
+    box-shadow: inset 0 0 0 1px var(--color-gold);
+  }
+
+  .option-row:disabled {
+    cursor: not-allowed;
+    opacity: 0.45;
+  }
+
+  /* ── Rhythm ────────────────────────────────────────────────── */
+  .section {
+    margin-top: 48px;
+  }
+
+  @media (min-width: 1024px) {
+    .section {
+      margin-top: 64px;
+    }
+  }
+
+  .stack-gap > * + * {
+    margin-top: 12px;
   }
 }

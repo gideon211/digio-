@@ -7,13 +7,56 @@ export interface VehicleClass {
   seats: number;
   bags: number;
   multiplier: number;
+  /** Cheapest self-drive day rate in this class, in pesewas. */
+  dailyRateFromPesewas: number;
+  chauffeurDayRatePesewas: number;
+  securityDepositPesewas: number;
   availableVehicles: number;
+}
+
+export interface RentalClass {
+  slug: string;
+  name: string;
+  seats: number;
+  bags: number;
+  dailyRateFromPesewas: number;
+  chauffeurDayRatePesewas: number;
+  securityDepositPesewas: number;
+  availableVehicles: number;
+}
+
+export interface RentalAvailability {
+  fromDate: string;
+  toDate: string;
+  days: number;
+  classes: RentalClass[];
+}
+
+export interface RentalVehicle {
+  id: string;
+  plate: string;
+  make: string;
+  model: string;
+  year: number;
+  color: string;
+  dailyRatePesewas: number;
+}
+
+export interface RentalQuoteDetails {
+  vehiclePlate: string;
+  vehicleDescription: string;
+  fromDate: string;
+  toDate: string;
+  days: number;
+  securityDepositPesewas: number;
 }
 
 export interface Zone {
   slug: string;
   name: string;
   airport: boolean;
+  lat: number | null;
+  lng: number | null;
   sortOrder: number;
 }
 
@@ -23,16 +66,56 @@ export interface Extra {
   pricePesewas: number;
 }
 
+/** One OSM place from the server-side Photon proxy. */
+export interface Place {
+  label: string;
+  lat: number;
+  lng: number;
+  kind: 'airport' | 'place' | 'street' | 'poi' | 'other';
+}
+
+/** The pricing zone a point falls in, decided by PostGIS — never by the client. */
+export interface ZoneMatch {
+  zone: { slug: string; name: string; airport: boolean } | null;
+  distanceMetres: number;
+  withinServiceArea: boolean;
+}
+
+export type LocateResult = ZoneMatch & { place: Place | null };
+
+export interface RentalExtra {
+  code: string;
+  label: string;
+  dailyPesewas: number;
+}
+
 export interface Catalog {
   vehicleClasses: VehicleClass[];
   zones: Zone[];
   extras: Extra[];
+  rentalExtras: RentalExtra[];
 }
 
 export interface LineItem {
   code: string;
   label: string;
   amountPesewas: number;
+}
+
+/** One class priced on a route. Browsing issues no token, so it reserves nothing. */
+export interface TransferPrice {
+  classSlug: string;
+  name: string;
+  description: string;
+  seats: number;
+  bags: number;
+  availableVehicles: number;
+  subtotalPesewas: number;
+  discountPesewas: number;
+  totalPesewas: number;
+  depositPesewas: number;
+  balancePesewas: number;
+  lineItems: LineItem[];
 }
 
 export interface Quote {
@@ -47,6 +130,8 @@ export interface Quote {
   totalPesewas: number;
   depositPesewas: number;
   balancePesewas: number;
+  /** Present for self-drive and chauffeur day hire. */
+  rental?: RentalQuoteDetails;
 }
 
 export interface Booking {
@@ -68,6 +153,14 @@ export interface Booking {
   paidPesewas: number;
   balancePesewas: number;
   payment: { status: 'unpaid' | 'part_paid' | 'deposit_paid' | 'paid_in_full'; channel: string };
+  vehicle: { plate: string; description: string } | null;
+  rental: {
+    days: number;
+    fromDate: string;
+    toDate: string;
+    deliveryFeePesewas: number;
+    securityDepositPesewas: number;
+  } | null;
   createdAt: string;
 }
 
@@ -119,7 +212,57 @@ async function request<T>(path: string, init?: RequestInit): Promise<T> {
 }
 
 export const api = {
+  searchPlaces: (input: { q: string; limit?: number; lat?: number; lng?: number }) =>
+    request<{ places: Place[] }>(
+      `/locations/search?q=${encodeURIComponent(input.q)}&limit=${input.limit ?? 6}` +
+        (input.lat === undefined ? '' : `&lat=${input.lat}`) +
+        (input.lng === undefined ? '' : `&lng=${input.lng}`),
+    ),
+
+  /** Reverse geocode plus zone resolution — what "use my location" calls. */
+  locate: (input: { lat: number; lng: number }) =>
+    request<LocateResult>(`/locations/locate?lat=${input.lat}&lng=${input.lng}`),
+
+  resolveZone: (input: { lat: number; lng: number }) =>
+    request<ZoneMatch>(`/locations/resolve?lat=${input.lat}&lng=${input.lng}`),
+
   catalog: () => request<Catalog>('/catalog'),
+
+  /** Published airport price list — every city zone, every class. */
+  fares: () =>
+    request<{
+      from: string;
+      routes: {
+        zoneSlug: string;
+        zone: string;
+        prices: { classSlug: string; className: string; pricePesewas: number }[];
+      }[];
+    }>('/catalog/fares'),
+
+  sendEnquiry: (input: {
+    kind: 'jet' | 'yacht' | 'corporate' | 'wedding' | 'long_term';
+    name: string;
+    phone: string;
+    email?: string;
+    message?: string;
+  }) =>
+    request<{ id: string; kind: string; status: string }>('/enquiries', {
+      method: 'POST',
+      body: JSON.stringify(input),
+    }),
+
+  /** Prices every class on a route at once, without issuing a quote token. */
+  compareTransfers: (input: {
+    fromZoneSlug: string;
+    toZoneSlug: string;
+    passengers: number;
+    bags: number;
+    extras: string[];
+    promoCode?: string;
+  }) => request<TransferPrice[]>('/quotes/transfer-compare', {
+    method: 'POST',
+    body: JSON.stringify(input),
+  }),
 
   createChauffeurQuote: (input: {
     classSlug: string;
@@ -133,6 +276,30 @@ export const api = {
     promoCode?: string;
   }) =>
     request<Quote>('/quotes/chauffeur', {
+      method: 'POST',
+      body: JSON.stringify(input),
+    }),
+
+  rentalClasses: (input: { fromDate: string; toDate: string }) =>
+    request<RentalAvailability>(
+      `/rentals/classes?fromDate=${input.fromDate}&toDate=${input.toDate}`,
+    ),
+
+  rentalAvailability: (input: { classSlug: string; fromDate: string; toDate: string }) =>
+    request<{ classSlug: string; fromDate: string; toDate: string; days: number; vehicles: RentalVehicle[] }>(
+      `/rentals/availability?classSlug=${encodeURIComponent(input.classSlug)}&fromDate=${input.fromDate}&toDate=${input.toDate}`,
+    ),
+
+  createRentalQuote: (input: {
+    product: 'self_drive' | 'chauffeur_hire';
+    classSlug: string;
+    fromDate: string;
+    toDate: string;
+    deliveryZoneSlug?: string;
+    extras: string[];
+    promoCode?: string;
+  }) =>
+    request<Quote>('/quotes/rental', {
       method: 'POST',
       body: JSON.stringify(input),
     }),

@@ -45,6 +45,9 @@ const envSchema = z.object({
 
   NOTIFICATIONS_DISPATCH_ENABLED: z.string().default('true'),
 
+  /** Live trip simulator. Defaults on outside production; set 'false' to disable. */
+  TRACKING_SIMULATION: z.enum(['true', 'false']).optional(),
+
   S3_ENDPOINT: z.string().optional(),
   S3_BUCKET: z.string().optional(),
   S3_ACCESS_KEY_ID: z.string().optional(),

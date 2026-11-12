@@ -63,10 +63,10 @@ function PaymentReturn() {
   if (!reference) {
     return (
       <Shell title="Nothing to check">
-        <p className="text-[13px] text-muted">
+        <p className="text-body-sm text-muted">
           This page expects a payment reference. Start a booking to get one.
         </p>
-        <Link href="/book" className="btn-secondary mt-3">
+        <Link href="/book" className="btn btn-secondary mt-3">
           Book a ride
         </Link>
       </Shell>
@@ -84,7 +84,7 @@ function PaymentReturn() {
         <p className="mt-3 text-xs text-muted">
           Your confirmation is on its way by WhatsApp and SMS. Keep the reference for the driver.
         </p>
-        <Link href={`/b/${payment.bookingRef}`} className="btn-primary mt-3">
+        <Link href={`/b/${payment.bookingRef}`} className="btn btn-primary mt-3">
           Manage this booking
         </Link>
       </Shell>
@@ -94,10 +94,10 @@ function PaymentReturn() {
   if (payment?.status === 'failed') {
     return (
       <Shell title="Payment did not go through">
-        <p className="text-[13px] text-muted">
+        <p className="text-body-sm text-muted">
           Nothing was charged. You can try again with mobile money or a card.
         </p>
-        <Link href={`/b/${payment.bookingRef}`} className="btn-secondary mt-3">
+        <Link href={`/b/${payment.bookingRef}`} className="btn btn-secondary mt-3">
           Retry from the booking
         </Link>
       </Shell>
@@ -107,8 +107,8 @@ function PaymentReturn() {
   if (error) {
     return (
       <Shell title="We lost the thread">
-        <p className="rounded-[10px] bg-danger-bg px-3 py-2 text-[13px] text-danger">{error}</p>
-        <Link href="/" className="btn-secondary mt-3">
+        <p className="rounded-input bg-danger-bg px-3 py-2.5 text-body-sm text-danger">{error}</p>
+        <Link href="/" className="btn btn-secondary mt-3">
           Back to home
         </Link>
       </Shell>
@@ -119,7 +119,7 @@ function PaymentReturn() {
 
   return (
     <Shell title={timedOut ? 'Still waiting' : 'Confirming your deposit'}>
-      <p className="text-[13px] text-muted">
+      <p className="text-body-sm text-muted">
         {timedOut
           ? 'Your mobile money approval has not come through yet. The booking stays valid — we will message you the moment it clears.'
           : 'If you approved the mobile money prompt, this page updates on its own. Keep it open.'}
@@ -129,7 +129,7 @@ function PaymentReturn() {
         <span className="tabular text-[13px] text-muted">{payment?.status ?? 'checking…'}</span>
       </div>
       {payment ? (
-        <Link href={`/b/${payment.bookingRef}`} className="btn-secondary mt-3">
+        <Link href={`/b/${payment.bookingRef}`} className="btn btn-secondary mt-3">
           Open the booking
         </Link>
       ) : null}
@@ -145,16 +145,13 @@ function Shell({
   children: React.ReactNode;
 }) {
   return (
-    <main className="app-shell pt-5">
-      <header className="mb-4 flex items-center justify-between">
-        <Link href="/" className="font-display text-xl font-bold">
-          Digio<span className="text-gold">.</span>
-        </Link>
-        <span className="text-xs text-muted">Payment</span>
-      </header>
-      <div className="card">
-        <h1 className="font-display text-[22px] leading-tight font-bold">{title}</h1>
-        <div className="mt-3">{children}</div>
+    <main className="app-shell pt-6 pb-4">
+      <div className="stack">
+        <section className="form-card">
+          <p className="eyebrow">Payment</p>
+          <h1 className="mt-2 font-display text-display-md text-ink">{title}</h1>
+          <div className="mt-4">{children}</div>
+        </section>
       </div>
     </main>
   );
@@ -162,9 +159,15 @@ function Shell({
 
 function Row({ label, value, strong }: { label: string; value: string; strong?: boolean }) {
   return (
-    <div className="flex items-baseline justify-between">
-      <dt className="text-xs text-muted">{label}</dt>
-      <dd className={strong ? 'tabular font-display text-lg font-bold' : 'tabular font-semibold'}>
+    <div className="flex items-baseline justify-between gap-4">
+      <dt className="text-body-sm text-muted">{label}</dt>
+      <dd
+        className={
+          strong
+            ? 'tabular font-display text-display-sm font-bold text-ink'
+            : 'tabular text-body-sm font-medium text-ink'
+        }
+      >
         {value}
       </dd>
     </div>

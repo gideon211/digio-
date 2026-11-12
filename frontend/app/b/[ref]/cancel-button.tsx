@@ -25,32 +25,39 @@ export function CancelButton({ bookingRef }: { bookingRef: string }) {
 
   if (!confirming) {
     return (
-      <button type="button" className="btn-secondary" onClick={() => setConfirming(true)}>
+      <button type="button" className="btn btn-secondary" onClick={() => setConfirming(true)}>
         Cancel this booking
       </button>
     );
   }
 
   return (
-    <div className="card">
-      <p className="text-[13px] font-semibold">Cancel {bookingRef}?</p>
-      <p className="mt-1 text-xs text-muted">
-        Any deposit already paid is refunded under the cancellation policy.
+    <section className="form-card" role="alertdialog" aria-label={`Cancel ${bookingRef}`}>
+      <h2 className="font-display text-display-sm text-ink">Cancel {bookingRef}?</h2>
+      <p className="mt-1.5 text-body-sm text-muted">
+        The car goes straight back into the fleet. Any deposit already paid is refunded under the
+        cancellation policy.
       </p>
-      {error ? <p className="mt-2 text-[13px] text-danger">{error}</p> : null}
-      <div className="mt-3 grid grid-cols-2 gap-2">
-        <button type="button" className="btn-secondary" onClick={() => setConfirming(false)}>
+
+      {error ? (
+        <p className="mt-3 rounded-input bg-danger-bg px-3 py-2.5 text-body-sm text-danger">
+          {error}
+        </p>
+      ) : null}
+
+      <div className="mt-4 grid grid-cols-2 gap-2">
+        <button type="button" className="btn btn-secondary" onClick={() => setConfirming(false)}>
           Keep it
         </button>
         <button
           type="button"
-          className="btn-primary"
+          className="btn btn-primary"
           disabled={busy}
           onClick={() => void cancel()}
         >
-          {busy ? 'Cancelling…' : 'Cancel'}
+          {busy ? 'Cancelling…' : 'Cancel booking'}
         </button>
       </div>
-    </div>
+    </section>
   );
 }

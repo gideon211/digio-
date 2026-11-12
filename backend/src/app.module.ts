@@ -6,10 +6,14 @@ import { validateEnv } from './config/env';
 import { DatabaseModule } from './db/database.module';
 import { BookingsModule } from './modules/bookings/bookings.module';
 import { CatalogModule } from './modules/catalog/catalog.module';
+import { EnquiriesModule } from './modules/enquiries/enquiries.module';
 import { HealthModule } from './modules/health/health.module';
+import { LocationsModule } from './modules/locations/locations.module';
 import { NotificationsModule } from './modules/notifications/notifications.module';
 import { PaymentsModule } from './modules/payments/payments.module';
 import { QuotesModule } from './modules/quotes/quotes.module';
+import { RentalsModule } from './modules/rentals/rentals.module';
+import { TrackingModule } from './modules/tracking/tracking.module';
 
 @Module({
   imports: [
@@ -22,10 +26,14 @@ import { QuotesModule } from './modules/quotes/quotes.module';
     DatabaseModule,
     HealthModule,
     CatalogModule,
+    LocationsModule,
+    EnquiriesModule,
     QuotesModule,
+    RentalsModule,
     BookingsModule,
     PaymentsModule,
     NotificationsModule,
+    TrackingModule,
   ],
   providers: [{ provide: APP_FILTER, useClass: AllExceptionsFilter }],
 })

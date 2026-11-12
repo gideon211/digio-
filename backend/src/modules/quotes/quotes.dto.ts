@@ -1,11 +1,6 @@
 import { z } from 'zod';
 
-export const chauffeurExtrasSchema = z.enum([
-  'meet_greet',
-  'child_seat',
-  'extra_stop',
-  'refreshments',
-]);
+export const chauffeurExtrasSchema = z.enum(['meet_greet', 'child_seat', 'extra_stop', 'refreshments']);
 
 export const createChauffeurQuoteSchema = z.object({
   classSlug: z.string().min(1).max(40),
@@ -26,3 +21,15 @@ export const createChauffeurQuoteSchema = z.object({
 });
 
 export type CreateChauffeurQuoteInput = z.infer<typeof createChauffeurQuoteSchema>;
+
+/**
+ * Comparison pricing has no class and no pick-up time: it prices every class on
+ * a route at once and issues no token, so browsing costs nothing.
+ */
+export const compareTransfersSchema = createChauffeurQuoteSchema.omit({
+  classSlug: true,
+  startsAt: true,
+  flightNumber: true,
+});
+
+export type CompareTransfersInput = z.infer<typeof compareTransfersSchema>;

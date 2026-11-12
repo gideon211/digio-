@@ -1,5 +1,7 @@
 import type { Metadata, Viewport } from 'next';
 import { Bricolage_Grotesque, DM_Sans } from 'next/font/google';
+import { SiteFooter } from '@/components/site-footer';
+import { SiteHeader } from '@/components/site-header';
 import './globals.css';
 
 const bricolage = Bricolage_Grotesque({
@@ -17,7 +19,10 @@ const dmSans = DM_Sans({
 });
 
 export const metadata: Metadata = {
-  title: 'Digio — Arrive well. Every ride.',
+  title: {
+    default: 'Digio — Arrive well. Every ride.',
+    template: '%s · Digio',
+  },
   description:
     'Late-model cars, vetted chauffeurs, one fixed price. Airport transfers, chauffeur hire and self-drive rentals in Accra.',
 };
@@ -32,7 +37,11 @@ export const viewport: Viewport = {
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="en-GH" className={`${bricolage.variable} ${dmSans.variable}`}>
-      <body>{children}</body>
+      <body className="flex min-h-dvh flex-col">
+        <SiteHeader />
+        <div className="flex-1">{children}</div>
+        <SiteFooter />
+      </body>
     </html>
   );
 }

@@ -15,7 +15,12 @@ export class CatalogController {
       this.catalog.activeZones(),
     ]);
 
-    return { vehicleClasses, zones, extras: this.catalog.extras() };
+    return {
+      vehicleClasses,
+      zones,
+      extras: this.catalog.extras(),
+      rentalExtras: this.catalog.rentalExtras(),
+    };
   }
 
   @Get('vehicle-classes')
@@ -26,5 +31,16 @@ export class CatalogController {
   @Get('zones')
   zones() {
     return this.catalog.activeZones();
+  }
+
+  @Get('fares')
+  @ApiOperation({
+    summary: 'Published airport price list',
+    description:
+      'Every city zone priced from the airport for each vehicle class, run through the same ' +
+      'pure engine the quote endpoint uses — the homepage and the booking cannot disagree.',
+  })
+  fares() {
+    return this.catalog.airportFares();
   }
 }

@@ -1,0 +1,1 @@
+ALTER TABLE "trip_positions" ADD COLUMN "distance_along" numeric(10, 2);

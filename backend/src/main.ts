@@ -1,11 +1,11 @@
 import 'reflect-metadata';
+import compress from '@fastify/compress';
+import helmet from '@fastify/helmet';
 import { Logger } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { NestFactory } from '@nestjs/core';
 import { FastifyAdapter, type NestFastifyApplication } from '@nestjs/platform-fastify';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
-import compress from '@fastify/compress';
-import helmet from '@fastify/helmet';
 import { AppModule } from './app.module';
 
 async function bootstrap(): Promise<void> {
@@ -27,6 +27,20 @@ async function bootstrap(): Promise<void> {
 
   await app.register(helmet, { contentSecurityPolicy: false });
   await app.register(compress, { global: true, encodings: ['gzip', 'deflate'] });
+
+  // Fastify rejects `content-type: application/json` with a zero-length body.
+  // A POST with nothing to say (cancel, for instance) is still a valid request,
+  // so an empty payload is read as `{}`. Everything else goes through Fastify's
+  // own parser, which keeps its prototype-poisoning guards.
+  const fastify = app.getHttpAdapter().getInstance();
+  const parseJson = fastify.getDefaultJsonParser('error', 'error');
+  app.useBodyParser('application/json', { bodyLimit: 1_048_576 }, (request, body, done) => {
+    if (!body || body.length === 0) {
+      done(null, {});
+      return;
+    }
+    parseJson(request as Parameters<typeof parseJson>[0], body.toString(), done);
+  });
 
   const configuredOrigins = (config.get<string>('CORS_ORIGINS') ?? '')
     .split(',')
@@ -54,9 +68,12 @@ async function bootstrap(): Promise<void> {
     )
     .setVersion('0.1.0')
     .addTag('quotes', 'Server-resolved pricing')
+    .addTag('rentals', 'Rental availability by date range')
+    .addTag('enquiries', 'Corporate, events, jets and yachts')
     .addTag('bookings', 'Quote → booking')
     .addTag('payments', 'Paystack deposits and webhooks')
     .addTag('catalog', 'Zones, vehicle classes, extras')
+    .addTag('tracking', 'Live trip tracking, driver pings and nearby cars')
     .build();
 
   const document = SwaggerModule.createDocument(app, swaggerConfig);

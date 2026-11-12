@@ -1,6 +1,7 @@
 import { relations } from 'drizzle-orm';
 import {
   boolean,
+  customType,
   date,
   index,
   integer,
@@ -12,7 +13,6 @@ import {
   timestamp,
   uniqueIndex,
   uuid,
-  customType,
 } from 'drizzle-orm/pg-core';
 
 /**
@@ -24,11 +24,18 @@ export const dateRange = customType<{ data: string; driverData: string }>({
   },
 });
 
-export const productType = pgEnum('product_type', [
-  'chauffeur_transfer',
-  'chauffeur_hire',
-  'self_drive',
-]);
+/**
+ * PostGIS point. drizzle-kit quotes type names containing parentheses, so the
+ * generated migration is reviewed by hand before it runs — the same treatment
+ * the `zones.centroid` column already gets (see migration 0000).
+ */
+export const geographyPoint = customType<{ data: string; driverData: string }>({
+  dataType() {
+    return 'geography(Point,4326)';
+  },
+});
+
+export const productType = pgEnum('product_type', ['chauffeur_transfer', 'chauffeur_hire', 'self_drive']);
 
 export const bookingStatus = pgEnum('booking_status', [
   'pending',
@@ -40,12 +47,7 @@ export const bookingStatus = pgEnum('booking_status', [
   'expired',
 ]);
 
-export const vehicleStatus = pgEnum('vehicle_status', [
-  'available',
-  'on_trip',
-  'servicing',
-  'retired',
-]);
+export const vehicleStatus = pgEnum('vehicle_status', ['available', 'on_trip', 'servicing', 'retired']);
 
 export const driverStatus = pgEnum('driver_status', ['available', 'on_trip', 'off_duty']);
 
@@ -69,13 +71,7 @@ export const discountType = pgEnum('discount_type', ['percent', 'fixed']);
 
 export const documentOwner = pgEnum('document_owner', ['driver', 'vehicle', 'customer']);
 
-export const enquiryKind = pgEnum('enquiry_kind', [
-  'jet',
-  'yacht',
-  'corporate',
-  'wedding',
-  'long_term',
-]);
+export const enquiryKind = pgEnum('enquiry_kind', ['jet', 'yacht', 'corporate', 'wedding', 'long_term']);
 
 /** A deposit secures the booking; the balance is collected later. */
 export const paymentKind = pgEnum('payment_kind', ['deposit', 'balance']);
@@ -111,6 +107,10 @@ export const vehicleClasses = pgTable('vehicle_classes', {
   bags: integer('bags').notNull(),
   /** Applied to the zone-pair base price. 1.00 = sedan. */
   multiplier: numeric('multiplier', { precision: 4, scale: 2 }).notNull().default('1.00'),
+  /** Chauffeur day hire rate for this class. Self-drive uses the vehicle's own rate. */
+  chauffeurDayRatePesewas: integer('chauffeur_day_rate_pesewas').notNull().default(0),
+  /** Refundable hold for self-drive; never part of the rental total. */
+  securityDepositPesewas: integer('security_deposit_pesewas').notNull().default(0),
   sortOrder: integer('sort_order').notNull().default(0),
   createdAt: timestamp('created_at', { withTimezone: true }).notNull().defaultNow(),
 });
@@ -150,6 +150,8 @@ export const drivers = pgTable('drivers', {
   rating: numeric('rating', { precision: 3, scale: 2 }).notNull().default('5.00'),
   languages: text('languages').array().notNull().default([]),
   status: driverStatus('status').notNull().default('available'),
+  /** The car this driver is paired with; live tracking reports it to riders. */
+  vehicleId: uuid('vehicle_id').references(() => vehicles.id, { onDelete: 'set null' }),
   createdAt: timestamp('created_at', { withTimezone: true }).notNull().defaultNow(),
 });
 
@@ -185,9 +187,7 @@ export const zonePairs = pgTable(
     active: boolean('active').notNull().default(true),
     updatedAt: timestamp('updated_at', { withTimezone: true }).notNull().defaultNow(),
   },
-  (table) => [
-    uniqueIndex('zone_pairs_unique_idx').on(table.fromZoneId, table.toZoneId, table.classId),
-  ],
+  (table) => [uniqueIndex('zone_pairs_unique_idx').on(table.fromZoneId, table.toZoneId, table.classId)],
 );
 
 export const promos = pgTable('promos', {
@@ -232,6 +232,8 @@ export const quotes = pgTable(
     discountPesewas: integer('discount_pesewas').notNull().default(0),
     totalPesewas: integer('total_pesewas').notNull(),
     depositPesewas: integer('deposit_pesewas').notNull(),
+    /** Refundable hold, reported separately from the price. Rentals only. */
+    securityDepositPesewas: integer('security_deposit_pesewas').notNull().default(0),
     expiresAt: timestamp('expires_at', { withTimezone: true }).notNull(),
     consumedAt: timestamp('consumed_at', { withTimezone: true }),
     createdAt: timestamp('created_at', { withTimezone: true }).notNull().defaultNow(),
@@ -261,6 +263,10 @@ export const bookings = pgTable(
     discountPesewas: integer('discount_pesewas').notNull().default(0),
     totalPesewas: integer('total_pesewas').notNull(),
     depositDuePesewas: integer('deposit_due_pesewas').notNull(),
+    /** Rental only: days charged and the refundable security hold. */
+    rentalDays: integer('rental_days'),
+    deliveryFeePesewas: integer('delivery_fee_pesewas').notNull().default(0),
+    securityDepositPesewas: integer('security_deposit_pesewas').notNull().default(0),
     paidPesewas: integer('paid_pesewas').notNull().default(0),
     currency: text('currency').notNull().default('GHS'),
     notes: text('notes'),
@@ -352,11 +358,7 @@ export const notificationOutbox = pgTable(
     updatedAt: timestamp('updated_at', { withTimezone: true }).notNull().defaultNow(),
   },
   (table) => [
-    uniqueIndex('notification_outbox_unique_idx').on(
-      table.bookingId,
-      table.event,
-      table.channel,
-    ),
+    uniqueIndex('notification_outbox_unique_idx').on(table.bookingId, table.event, table.channel),
     index('notification_outbox_due_idx').on(table.status, table.nextAttemptAt),
   ],
 );
@@ -383,6 +385,57 @@ export const enquiries = pgTable('enquiries', {
   status: text('status').notNull().default('new'),
   createdAt: timestamp('created_at', { withTimezone: true }).notNull().defaultNow(),
 });
+
+// ---------------------------------------------------------------------------
+// Live trip tracking
+// ---------------------------------------------------------------------------
+
+/**
+ * One row per driver — the latest ping wins. The GiST index on `location`
+ * backs the ST_DWithin/ST_Distance "nearest car" query.
+ */
+export const driverLocations = pgTable(
+  'driver_locations',
+  {
+    driverId: uuid('driver_id')
+      .primaryKey()
+      .references(() => drivers.id, { onDelete: 'cascade' }),
+    location: geographyPoint('location').notNull(),
+    /** Compass bearing in degrees, 0–360. */
+    heading: numeric('heading', { precision: 5, scale: 2 }),
+    speedKph: numeric('speed_kph', { precision: 5, scale: 2 }),
+    recordedAt: timestamp('recorded_at', { withTimezone: true }).notNull().defaultNow(),
+  },
+  (table) => [index('driver_locations_location_idx').using('gist', table.location)],
+);
+
+/**
+ * The route a booking will play back (`kind = 'route'`, seeded from OSRM at
+ * assignment) plus the positions actually driven (`kind = 'trace'`, appended by
+ * the simulator or a real driver app). The discriminator keeps `route`
+ * stable while the trace grows.
+ */
+export const tripPositions = pgTable(
+  'trip_positions',
+  {
+    id: uuid('id').primaryKey().defaultRandom(),
+    bookingId: uuid('booking_id')
+      .notNull()
+      .references(() => bookings.id, { onDelete: 'cascade' }),
+    seq: integer('seq').notNull(),
+    lat: numeric('lat', { precision: 9, scale: 6 }).notNull(),
+    lng: numeric('lng', { precision: 9, scale: 6 }).notNull(),
+    kind: text('kind').notNull().default('route'),
+    /**
+     * Metres along the route when this point was recorded. Playback resumes
+     * from this number: projecting the raw lat/lng back onto the polyline is
+     * ambiguous when a route crosses or retraces itself.
+     */
+    distanceAlong: numeric('distance_along', { precision: 10, scale: 2 }),
+    recordedAt: timestamp('recorded_at', { withTimezone: true }).notNull().defaultNow(),
+  },
+  (table) => [index('trip_positions_booking_seq_idx').on(table.bookingId, table.seq)],
+);
 
 // ---------------------------------------------------------------------------
 // Relations (query convenience only)

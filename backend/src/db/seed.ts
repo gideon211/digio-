@@ -3,14 +3,7 @@ import { sql } from 'drizzle-orm';
 import { drizzle } from 'drizzle-orm/node-postgres';
 import { Pool } from 'pg';
 import { toPesewas } from '../common/money';
-import {
-  drivers,
-  promos,
-  vehicleClasses,
-  vehicles,
-  zonePairs,
-  zones,
-} from './schema';
+import { drivers, promos, vehicleClasses, vehicles, zonePairs, zones } from './schema';
 
 /**
  * Seed data mirrors the prototype so the UI can be ported against real numbers.
@@ -18,14 +11,51 @@ import {
  */
 
 const CLASSES = [
-  { slug: 'sedan', name: 'Executive Sedan', seats: 3, bags: 2, multiplier: '1.00', sortOrder: 1, description: 'Toyota Camry or similar' },
-  { slug: 'suv', name: 'Premium SUV', seats: 4, bags: 4, multiplier: '1.60', sortOrder: 2, description: 'Toyota Prado or similar' },
-  { slug: 'van', name: 'Executive Van', seats: 7, bags: 6, multiplier: '2.10', sortOrder: 3, description: 'Toyota Hiace VIP or similar' },
+  {
+    slug: 'sedan',
+    name: 'Executive Sedan',
+    seats: 3,
+    bags: 2,
+    multiplier: '1.00',
+    chauffeurDayRate: 1200,
+    securityDeposit: 500,
+    sortOrder: 1,
+    description: 'Toyota Camry or similar',
+  },
+  {
+    slug: 'suv',
+    name: 'Premium SUV',
+    seats: 4,
+    bags: 4,
+    multiplier: '1.60',
+    chauffeurDayRate: 1800,
+    securityDeposit: 800,
+    sortOrder: 2,
+    description: 'Toyota Prado or similar',
+  },
+  {
+    slug: 'van',
+    name: 'Executive Van',
+    seats: 7,
+    bags: 6,
+    multiplier: '2.10',
+    chauffeurDayRate: 2200,
+    securityDeposit: 1000,
+    sortOrder: 3,
+    description: 'Toyota Hiace VIP or similar',
+  },
 ] as const;
 
 /** Fare from the prototype, in cedis, used as the airport ↔ zone price. */
 const ZONES = [
-  { slug: 'kotoka-airport', name: 'Kotoka International Airport', airport: true, fare: 0, lat: 5.6052, lng: -0.1668 },
+  {
+    slug: 'kotoka-airport',
+    name: 'Kotoka International Airport',
+    airport: true,
+    fare: 0,
+    lat: 5.6052,
+    lng: -0.1668,
+  },
   { slug: 'airport-city', name: 'Airport City', airport: false, fare: 45, lat: 5.6061, lng: -0.1745 },
   { slug: 'cantonments', name: 'Cantonments', airport: false, fare: 60, lat: 5.5757, lng: -0.1791 },
   { slug: 'labone', name: 'Labone', airport: false, fare: 75, lat: 5.5617, lng: -0.1781 },
@@ -34,16 +64,68 @@ const ZONES = [
   { slug: 'dzorwulu', name: 'Dzorwulu', airport: false, fare: 90, lat: 5.6123, lng: -0.1926 },
   { slug: 'east-legon', name: 'East Legon', airport: false, fare: 95, lat: 5.6357, lng: -0.1597 },
   { slug: 'ridge', name: 'Ridge', airport: false, fare: 100, lat: 5.5593, lng: -0.2003 },
-  { slug: 'spintex', name: 'Spintex', airport: false, fare: 120, lat: 5.6200, lng: -0.1000 },
-  { slug: 'tema-community-18', name: 'Tema (Community 18)', airport: false, fare: 160, lat: 5.6697, lng: -0.0166 },
+  { slug: 'spintex', name: 'Spintex', airport: false, fare: 120, lat: 5.62, lng: -0.1 },
+  {
+    slug: 'tema-community-18',
+    name: 'Tema (Community 18)',
+    airport: false,
+    fare: 160,
+    lat: 5.6697,
+    lng: -0.0166,
+  },
 ] as const;
 
 const VEHICLES = [
-  { plate: 'GR 4821-24', classSlug: 'sedan', make: 'Toyota', model: 'Camry', year: 2024, color: 'black', dailyRate: 800, mileageCapKm: 200 },
-  { plate: 'GN 2210-23', classSlug: 'sedan', make: 'Toyota', model: 'Camry', year: 2023, color: 'black', dailyRate: 750, mileageCapKm: 200 },
-  { plate: 'GE 7734-24', classSlug: 'suv', make: 'Toyota', model: 'Prado', year: 2024, color: 'black', dailyRate: 1400, mileageCapKm: 250 },
-  { plate: 'GW 5062-24', classSlug: 'suv', make: 'Toyota', model: 'Prado', year: 2024, color: 'white', dailyRate: 1400, mileageCapKm: 250 },
-  { plate: 'GT 1198-23', classSlug: 'van', make: 'Toyota', model: 'Hiace VIP', year: 2023, color: 'black', dailyRate: 1600, mileageCapKm: 300 },
+  {
+    plate: 'GR 4821-24',
+    classSlug: 'sedan',
+    make: 'Toyota',
+    model: 'Camry',
+    year: 2024,
+    color: 'black',
+    dailyRate: 800,
+    mileageCapKm: 200,
+  },
+  {
+    plate: 'GN 2210-23',
+    classSlug: 'sedan',
+    make: 'Toyota',
+    model: 'Camry',
+    year: 2023,
+    color: 'black',
+    dailyRate: 750,
+    mileageCapKm: 200,
+  },
+  {
+    plate: 'GE 7734-24',
+    classSlug: 'suv',
+    make: 'Toyota',
+    model: 'Prado',
+    year: 2024,
+    color: 'black',
+    dailyRate: 1400,
+    mileageCapKm: 250,
+  },
+  {
+    plate: 'GW 5062-24',
+    classSlug: 'suv',
+    make: 'Toyota',
+    model: 'Prado',
+    year: 2024,
+    color: 'white',
+    dailyRate: 1400,
+    mileageCapKm: 250,
+  },
+  {
+    plate: 'GT 1198-23',
+    classSlug: 'van',
+    make: 'Toyota',
+    model: 'Hiace VIP',
+    year: 2023,
+    color: 'black',
+    dailyRate: 1600,
+    mileageCapKm: 300,
+  },
 ] as const;
 
 const DRIVERS = [
@@ -53,10 +135,6 @@ const DRIVERS = [
   { name: 'Nana Kusi', phone: '+233551234570', rating: '4.89', languages: ['English', 'Fante'] },
   { name: 'Abena Owusu', phone: '+233551234571', rating: '4.99', languages: ['English', 'Twi', 'Ga'] },
 ] as const;
-
-function roundToFiveCedis(cedis: number): number {
-  return Math.round(cedis / 5) * 5;
-}
 
 async function main(): Promise<void> {
   const connectionString = process.env.DATABASE_URL;
@@ -80,6 +158,8 @@ async function main(): Promise<void> {
             seats: vehicleClass.seats,
             bags: vehicleClass.bags,
             multiplier: vehicleClass.multiplier,
+            chauffeurDayRatePesewas: toPesewas(vehicleClass.chauffeurDayRate),
+            securityDepositPesewas: toPesewas(vehicleClass.securityDeposit),
             sortOrder: vehicleClass.sortOrder,
           },
         });
@@ -131,7 +211,6 @@ async function main(): Promise<void> {
       for (const vehicleClass of CLASSES) {
         const classRow = classBySlug.get(vehicleClass.slug);
         if (!classRow) continue;
-        const multiplier = Number(vehicleClass.multiplier);
 
         const pairs: { from: string; to: string; cedis: number }[] = [
           { from: airport.id, to: cityZone.id, cedis: zone.fare },
@@ -139,17 +218,20 @@ async function main(): Promise<void> {
         ];
 
         for (const pair of pairs) {
+          // The pair stores the class-neutral base fare. The class multiplier
+          // is applied once, by the pricing engine at quote time — baking it
+          // in here as well would charge 1.6² for an SUV.
           await db
             .insert(zonePairs)
             .values({
               fromZoneId: pair.from,
               toZoneId: pair.to,
               classId: classRow.id,
-              pricePesewas: toPesewas(roundToFiveCedis(pair.cedis * multiplier)),
+              pricePesewas: toPesewas(pair.cedis),
             })
             .onConflictDoUpdate({
               target: [zonePairs.fromZoneId, zonePairs.toZoneId, zonePairs.classId],
-              set: { pricePesewas: toPesewas(roundToFiveCedis(pair.cedis * multiplier)) },
+              set: { pricePesewas: toPesewas(pair.cedis) },
             });
         }
       }
@@ -169,7 +251,9 @@ async function main(): Promise<void> {
         for (const vehicleClass of CLASSES) {
           const classRow = classBySlug.get(vehicleClass.slug);
           if (!classRow) continue;
-          const price = toPesewas(roundToFiveCedis(base * Number(vehicleClass.multiplier)));
+          // Class-neutral base again: the engine applies the multiplier and
+          // the GH₵5 ladder when the quote is taken.
+          const price = toPesewas(base);
 
           await db
             .insert(zonePairs)
