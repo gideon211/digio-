@@ -212,13 +212,21 @@ rather than inventing a new decoration per section. It is decorative and inert �
 no pointer events, no text, no behaviour — and the page reads the same without
 it.
 
-**Fleet photography** lives in `public/fleet/` at 2000×1125, one 16:9 crop per
-class, sourced from Wikimedia Commons. Two are CC0; the HiAce is CC BY-SA 4.0,
-so its author is credited on `/credits` and linked in the footer. Sources,
-licences and the processing recipe are in `public/fleet/CREDITS.md`. A light
-treatment (`.fleet-photo`) plus the band scrim pulls three photographs taken in
-three cities toward one tone; the illustration set remains as the fallback if an
-image fails to load.
+**Fleet photography** lives in `public/fleet/` at 2400×1350, one 16:9 crop per
+class, sourced from Wikimedia Commons. One is CC0; two are CC BY-SA 4.0, so
+their authors are credited on `/credits` and linked in the footer. Sources,
+licences and the processing recipe are in `public/fleet/CREDITS.md`.
+
+Files are named by subject (`executive-sedan.jpg`) rather than overwritten in
+place: the image optimizer and the browser both cache by URL, so replacing the
+bytes behind an existing path keeps serving the old photograph. Replace a photo
+by giving it a new name and pointing `PHOTO` in `fleet-band.tsx` at it.
+
+A light treatment (`.fleet-photo`) plus the band scrim pulls three photographs
+taken in three cities toward one tone; the illustration set remains as the
+fallback if an image fails to load. Next rejects any `quality` outside
+`images.qualities` (85 returns a 400 and renders nothing), so these use the
+default.
 
 Pages:
 

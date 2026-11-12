@@ -9,9 +9,9 @@ const PHOTOS = [
   {
     subject: 'Toyota Camry (XV70)',
     used: 'Executive Sedan',
-    author: 'Retired electrician',
-    licence: 'CC0 1.0',
-    href: 'https://commons.wikimedia.org/wiki/File:Moscow,_Toyota_Camry_(XV70)_black,_Oct_2025_01.jpg',
+    author: 'Dinkun Chen',
+    licence: 'CC BY-SA 4.0',
+    href: 'https://commons.wikimedia.org/wiki/File:TOYOTA_CAMRY_(XV70)_China_(42).jpg',
   },
   {
     subject: 'Toyota Land Cruiser Prado (J250)',
@@ -41,8 +41,8 @@ export default function CreditsPage() {
         <p className="eyebrow">Credits</p>
         <h1 className="mt-2 font-display text-display-lg text-ink">Image credits.</h1>
         <p className="mt-3 text-body-sm text-muted">
-          The fleet photographs come from Wikimedia Commons. Two are public domain; one is shared
-          under CC BY-SA 4.0, so its author is credited below.
+          The fleet photographs come from Wikimedia Commons. One is public domain; two are shared
+          under CC BY-SA 4.0, so their authors are credited below.
         </p>
 
         <ul className="mt-6 border-t border-line">

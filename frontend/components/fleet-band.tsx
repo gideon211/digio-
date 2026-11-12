@@ -13,6 +13,18 @@ const BEST_FOR: Record<string, string> = {
   van: 'Groups, event transfers and up to seven bags.',
 };
 
+/**
+ * The image optimizer caches by URL and the browser caches the optimized
+ * response, so replacing bytes at the same path keeps serving the old car.
+ * Photographs are therefore named by subject: replace one and give it a new
+ * name (e.g. `executive-sedan-2.jpg`) rather than overwriting it.
+ */
+const PHOTO: Record<string, string> = {
+  sedan: 'executive-sedan.jpg',
+  suv: 'premium-suv.jpg',
+  van: 'executive-van.jpg',
+};
+
 const short = (name: string) => name.replace('Executive ', '').replace('Premium ', '');
 
 /**
@@ -43,10 +55,18 @@ export function FleetBand({ classes }: { classes: VehicleClass[] }) {
                 <CarProfile kind={kind} className="absolute inset-0 h-full w-full p-5" />
               ) : (
                 <Image
-                  src={`/fleet/${current.slug}.jpg`}
+                  src={`/fleet/${PHOTO[current.slug] ?? `${current.slug}.jpg`}`}
                   alt=""
                   fill
-                  sizes="(min-width: 1024px) 44vw, 100vw"
+                  /*
+                   * The stage is a fixed ~567px column once the shell caps at
+                   * 1200px. Saying `44vw` there made a wide monitor ask for a
+                   * 3840px variant that the 2400px source cannot fill, which
+                   * upscales and softens. Declare the real width instead.
+                   * Quality is left at the default: Next rejects anything that
+                   * is not in `images.qualities`, and 85 returns a 400.
+                   */
+                  sizes="(min-width: 1200px) 570px, (min-width: 1024px) 48vw, 100vw"
                   className="fleet-photo object-cover"
                   onError={() => setFailed((prev) => ({ ...prev, [current.slug]: true }))}
                 />
