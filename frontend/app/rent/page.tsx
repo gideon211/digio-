@@ -360,7 +360,7 @@ export default function RentPage() {
                     >
                       <CarArt
                         kind={carKindFor(vehicleClass.slug)}
-                        className="h-[38px] w-20 text-forest"
+                        className="h-[26px] w-12 text-forest sm:h-[38px] sm:w-20"
                       />
                       <span className="min-w-0 flex-1">
                         <span className="block text-body-md font-semibold text-ink">
@@ -373,13 +373,14 @@ export default function RentPage() {
                           {full
                             ? 'Fully booked for these dates'
                             : `${vehicleClass.availableVehicles} free`}
-                          {product === 'self_drive' && vehicleClass.securityDepositPesewas > 0
+                          {product === 'self_drive' &&
+                          vehicleClass.securityDepositPesewas > 0
                             ? ` · ${formatGhs(vehicleClass.securityDepositPesewas)} hold`
                             : ''}
                         </span>
                       </span>
                       <span className="shrink-0 text-right">
-                        <span className="tabular block font-display text-display-sm text-ink">
+                        <span className="tabular block font-display text-body-md font-semibold text-ink sm:text-display-sm">
                           {rate > 0 ? `${formatGhs(rate)}/day` : 'On request'}
                         </span>
                       </span>

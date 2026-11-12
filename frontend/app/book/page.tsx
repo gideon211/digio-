@@ -538,7 +538,7 @@ function CarsStep(props: {
                 onClick={() => props.onSelect(price.classSlug)}
                 className="option-row"
               >
-                <CarArt kind={carKindFor(price.classSlug)} className="h-[38px] w-20 text-forest" />
+                <CarArt kind={carKindFor(price.classSlug)} className="h-[26px] w-12 text-forest sm:h-[38px] sm:w-20" />
                 <span className="min-w-0 flex-1">
                   <span className="block text-body-md font-semibold text-ink">{price.name}</span>
                   <span className="block truncate text-body-sm text-muted">{price.description}</span>
@@ -551,7 +551,7 @@ function CarsStep(props: {
                   </span>
                 </span>
                 <span className="shrink-0 text-right">
-                  <span className="tabular block font-display text-display-sm text-ink">
+                  <span className="tabular block font-display text-body-md font-semibold text-ink sm:text-display-sm">
                     {formatGhs(price.totalPesewas)}
                   </span>
                   <span className="tabular block text-caption text-muted">
@@ -590,7 +590,7 @@ function CarsStep(props: {
           ))}
         </div>
 
-        <div className="mt-4 grid grid-cols-[1fr_auto] items-end gap-2">
+        <div className="mt-4 grid grid-cols-[minmax(0,1fr)_auto] items-end gap-2">
           <Field label="Promo code">
             <input
               className="field-control uppercase"

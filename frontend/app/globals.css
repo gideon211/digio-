@@ -465,11 +465,13 @@
     font-variant-numeric: tabular-nums;
   }
 
-  /* Car selection rows: the active one is outlined in gold, never filled. */
+  /* Car selection rows: the active one is outlined in gold, never filled.
+   * The gap and the illustration shrink first on a narrow phone, so the price
+   * and the name keep their room. */
   .option-row {
     display: flex;
     align-items: center;
-    gap: 16px;
+    gap: 12px;
     width: 100%;
     padding: 16px;
     border: 1.5px solid var(--color-line);
@@ -479,6 +481,12 @@
     text-align: left;
     cursor: pointer;
     transition: border-color 120ms ease;
+  }
+
+  @media (min-width: 480px) {
+    .option-row {
+      gap: 16px;
+    }
   }
 
   .option-row:hover:not(:disabled) {
@@ -508,5 +516,19 @@
 
   .stack-gap > * + * {
     margin-top: 12px;
+  }
+
+  /*
+   * Implicit grid columns must not be sized by a child's intrinsic width.
+   *
+   * A single-column grid with no explicit template gets an `auto` track, and
+   * `auto` grows to fit the widest unbreakable content — a car row's art plus
+   * its price, say. On a 390px phone that pushed cards to 389px inside a 358px
+   * column and scrolled the whole page sideways. `minmax(0, 1fr)` lets the
+   * track match its container and makes the content wrap instead.
+   */
+  .grid,
+  .seg {
+    grid-auto-columns: minmax(0, 1fr);
   }
 }

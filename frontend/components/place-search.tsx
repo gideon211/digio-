@@ -201,7 +201,7 @@ export function PlaceSearch({
 
   return (
     <div className="relative">
-      <div className="field grid grid-cols-[1fr_auto] items-end gap-1">
+      <div className="field grid grid-cols-[minmax(0,1fr)_auto] items-end gap-1">
         <label htmlFor={id} className="min-w-0">
           <span className="field-label">{label}</span>
           <input
