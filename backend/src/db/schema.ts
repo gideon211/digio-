@@ -77,6 +77,27 @@ export const enquiryKind = pgEnum('enquiry_kind', [
   'long_term',
 ]);
 
+/** A deposit secures the booking; the balance is collected later. */
+export const paymentKind = pgEnum('payment_kind', ['deposit', 'balance']);
+
+export const notificationEvent = pgEnum('notification_event', [
+  'booking.confirmed',
+  'booking.reminder',
+  'booking.cancelled',
+  'payment.failed',
+  'payment.received',
+]);
+
+export const notificationChannel = pgEnum('notification_channel', ['whatsapp', 'sms']);
+
+export const notificationStatus = pgEnum('notification_status', [
+  'queued',
+  'sending',
+  'sent',
+  'failed',
+  'cancelled',
+]);
+
 // ---------------------------------------------------------------------------
 // Catalog
 // ---------------------------------------------------------------------------
@@ -282,15 +303,62 @@ export const payments = pgTable(
       .references(() => bookings.id),
     provider: text('provider').notNull().default('paystack'),
     providerRef: text('provider_ref').notNull().unique(),
+    /** Deposit or balance. A booking can have more than one successful payment. */
+    kind: paymentKind('kind').notNull().default('deposit'),
     amountPesewas: integer('amount_pesewas').notNull(),
     channel: paymentChannel('channel').notNull(),
     status: paymentStatus('status').notNull().default('initialized'),
+    /** Paystack access code, used to resume an abandoned checkout. */
+    accessCode: text('access_code'),
+    authorizationUrl: text('authorization_url'),
+    failureReason: text('failure_reason'),
+    paidAt: timestamp('paid_at', { withTimezone: true }),
     /** Full provider payload for reconciliation and disputes. */
     raw: jsonb('raw').$type<Record<string, unknown>>(),
     createdAt: timestamp('created_at', { withTimezone: true }).notNull().defaultNow(),
     updatedAt: timestamp('updated_at', { withTimezone: true }).notNull().defaultNow(),
   },
-  (table) => [index('payments_booking_idx').on(table.bookingId)],
+  (table) => [
+    index('payments_booking_idx').on(table.bookingId),
+    index('payments_status_idx').on(table.status),
+  ],
+);
+
+/**
+ * Transactional outbox for customer messaging.
+ *
+ * A row is written in the same transaction that confirms a payment, so a message
+ * can never be lost between "payment succeeded" and "notification queued".
+ * The unique key makes delivery idempotent: replaying a webhook cannot enqueue
+ * the same message twice.
+ */
+export const notificationOutbox = pgTable(
+  'notification_outbox',
+  {
+    id: uuid('id').primaryKey().defaultRandom(),
+    bookingId: uuid('booking_id').references(() => bookings.id, { onDelete: 'cascade' }),
+    event: notificationEvent('event').notNull(),
+    channel: notificationChannel('channel').notNull(),
+    recipient: text('recipient').notNull(),
+    template: text('template').notNull(),
+    payload: jsonb('payload').$type<Record<string, unknown>>().notNull().default({}),
+    status: notificationStatus('status').notNull().default('queued'),
+    attempts: integer('attempts').notNull().default(0),
+    nextAttemptAt: timestamp('next_attempt_at', { withTimezone: true }).notNull().defaultNow(),
+    lastError: text('last_error'),
+    providerRef: text('provider_ref'),
+    sentAt: timestamp('sent_at', { withTimezone: true }),
+    createdAt: timestamp('created_at', { withTimezone: true }).notNull().defaultNow(),
+    updatedAt: timestamp('updated_at', { withTimezone: true }).notNull().defaultNow(),
+  },
+  (table) => [
+    uniqueIndex('notification_outbox_unique_idx').on(
+      table.bookingId,
+      table.event,
+      table.channel,
+    ),
+    index('notification_outbox_due_idx').on(table.status, table.nextAttemptAt),
+  ],
 );
 
 export const documents = pgTable('documents', {

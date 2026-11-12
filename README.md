@@ -43,13 +43,18 @@ other local stacks.
 - Server-owned pricing: zone pair × class multiplier + extras − promo, 30% deposit
 - Quotes with a 15-minute TTL, burned atomically when a booking is created
 - Booking references (`DG-XXXXXX`), public read and cancel
+- Deposits by mobile money or card through Paystack, with an HMAC-verified,
+  replay-safe webhook and a simulated checkout for local development
+- SMS + WhatsApp confirmation through a transactional outbox, with SMS as a
+  fallback only when WhatsApp does not land
+- Manage-booking page at `/b/[ref]` and payment result page at `/book/return`
 - Double-booking prevention enforced by a Postgres exclusion constraint
-- Marketing + booking screens wired to the live API
+- Marketing, booking, payment and manage screens wired to the live API
 
 ## Not built yet
 
-Payments (Paystack), WhatsApp notifications, phone OTP auth, self-drive rental
-inventory, ops console, driver app.
+Refunds, self-drive rental inventory, phone OTP auth, flight tracking, dispatch
+console, driver app.
 
 ## Rules the codebase enforces
 

@@ -15,7 +15,11 @@ async function bootstrap(): Promise<void> {
       trustProxy: true,
       bodyLimit: 1_048_576,
     }),
-    { bufferLogs: true },
+    {
+      bufferLogs: true,
+      // Paystack signs the raw bytes; keep them before JSON parsing.
+      rawBody: true,
+    },
   );
 
   const config = app.get(ConfigService);
@@ -51,6 +55,7 @@ async function bootstrap(): Promise<void> {
     .setVersion('0.1.0')
     .addTag('quotes', 'Server-resolved pricing')
     .addTag('bookings', 'Quote → booking')
+    .addTag('payments', 'Paystack deposits and webhooks')
     .addTag('catalog', 'Zones, vehicle classes, extras')
     .build();
 

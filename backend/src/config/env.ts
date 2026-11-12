@@ -20,10 +20,30 @@ const envSchema = z.object({
 
   PAYSTACK_SECRET_KEY: z.string().optional(),
   PAYSTACK_WEBHOOK_SECRET: z.string().optional(),
+  PAYSTACK_API_URL: z.string().url().default('https://api.paystack.co'),
+  /** Where Paystack returns the customer after checkout. */
+  PAYSTACK_CALLBACK_URL: z.string().url().optional(),
+  /** Used when a booking has no customer email; Paystack requires one. */
+  PAYMENTS_FALLBACK_EMAIL: z.string().email().default('bookings@digiogh.com'),
+
+  /** Customer web app, used for manage-booking links in messages. */
+  APP_URL: z.string().url().default('http://localhost:3000'),
+  /** Public base URL of this API, used for local checkout simulation. */
+  API_PUBLIC_URL: z.string().url().default('http://localhost:4000'),
 
   WHATSAPP_TOKEN: z.string().optional(),
   WHATSAPP_PHONE_ID: z.string().optional(),
   WHATSAPP_VERIFY_TOKEN: z.string().optional(),
+  WHATSAPP_API_VERSION: z.string().default('v21.0'),
+  WHATSAPP_TEMPLATE_NAME: z.string().optional(),
+  WHATSAPP_TEMPLATE_LANG: z.string().default('en'),
+
+  SMS_PROVIDER: z.enum(['hubtel', 'termii']).optional(),
+  SMS_API_KEY: z.string().optional(),
+  SMS_CLIENT_ID: z.string().optional(),
+  SMS_SENDER_ID: z.string().default('DIGIO'),
+
+  NOTIFICATIONS_DISPATCH_ENABLED: z.string().default('true'),
 
   S3_ENDPOINT: z.string().optional(),
   S3_BUCKET: z.string().optional(),

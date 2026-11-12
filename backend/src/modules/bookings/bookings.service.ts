@@ -34,9 +34,11 @@ export interface BookingView {
   depositDuePesewas: number;
   paidPesewas: number;
   balancePesewas: number;
-  payment: { status: 'unpaid'; channel: string };
+  payment: { status: PaymentState; channel: string };
   createdAt: string;
 }
+
+export type PaymentState = 'unpaid' | 'part_paid' | 'deposit_paid' | 'paid_in_full';
 
 @Injectable()
 export class BookingsService {
@@ -222,10 +224,21 @@ export class BookingsService {
       depositDuePesewas: booking.depositDuePesewas,
       paidPesewas: booking.paidPesewas,
       balancePesewas: booking.totalPesewas - booking.paidPesewas,
-      payment: { status: 'unpaid', channel },
+      payment: { status: paymentState(booking), channel },
       createdAt: booking.createdAt.toISOString(),
     };
   }
+}
+
+/**
+ * Derived, never stored: a booking's payment state is a function of what has
+ * actually been collected. One source of truth, no drift between two columns.
+ */
+function paymentState(booking: typeof bookings.$inferSelect): PaymentState {
+  if (booking.paidPesewas <= 0) return 'unpaid';
+  if (booking.paidPesewas >= booking.totalPesewas) return 'paid_in_full';
+  if (booking.paidPesewas >= booking.depositDuePesewas) return 'deposit_paid';
+  return 'part_paid';
 }
 
 function isUniqueViolation(error: unknown): boolean {

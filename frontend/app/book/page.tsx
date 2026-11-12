@@ -96,6 +96,24 @@ export default function BookPage() {
     }
   }
 
+  async function startPayment() {
+    if (!booking) return;
+    setBusy(true);
+    setError(null);
+    try {
+      const payment = await api.initializePayment({ bookingRef: booking.ref });
+      if (payment.authorizationUrl) {
+        window.location.href = payment.authorizationUrl;
+        return;
+      }
+      setError('Could not open the payment page. Please retry.');
+    } catch (cause) {
+      setError(cause instanceof ApiError ? cause.message : 'Could not start the payment');
+    } finally {
+      setBusy(false);
+    }
+  }
+
   if (booking) {
     return (
       <main className="app-shell pt-5">
@@ -115,15 +133,29 @@ export default function BookPage() {
             <span className="tabular font-semibold">{formatGhs(booking.totalPesewas)}</span>
           </div>
           <div className="mt-1 flex items-baseline justify-between">
-            <span className="text-xs text-muted">Deposit due</span>
+            <span className="text-xs text-muted">Deposit due now</span>
             <span className="tabular font-semibold">{formatGhs(booking.depositDuePesewas)}</span>
           </div>
+          <div className="mt-1 flex items-baseline justify-between">
+            <span className="text-xs text-muted">Balance on the day</span>
+            <span className="tabular text-muted">
+              {formatGhs(booking.totalPesewas - booking.depositDuePesewas)}
+            </span>
+          </div>
           <p className="mt-3 text-xs text-muted">
-            Payment is the next module. Until then the ops team confirms on WhatsApp.
+            Pay the deposit to lock the car. We&rsquo;ll send the confirmation by SMS and WhatsApp.
           </p>
         </div>
-        <Link href="/" className="btn-secondary mt-3">
-          Back to home
+
+        {error ? (
+          <p className="mt-3 rounded-[10px] bg-danger-bg px-3 py-2 text-[13px] text-danger">{error}</p>
+        ) : null}
+
+        <button className="btn-primary mt-3" type="button" onClick={() => void startPayment()} disabled={busy}>
+          {busy ? 'Opening checkout…' : `Pay deposit ${formatGhs(booking.depositDuePesewas)}`}
+        </button>
+        <Link href={`/b/${booking.ref}`} className="btn-secondary mt-2">
+          Manage this booking
         </Link>
       </main>
     );

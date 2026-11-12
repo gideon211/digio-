@@ -51,6 +51,55 @@ POST /bookings
 A second submission gets `409 QUOTE_ALREADY_USED`. An expired quote gets
 `410 QUOTE_EXPIRED`. The client cannot influence the amount.
 
+## Payments
+
+```
+initialize → payments row (initialized)
+          → Paystack checkout
+          → (pending, authorization_url)
+
+webhook charge.success
+  verify HMAC-SHA512 over the raw body
+  BEGIN
+    SELECT payment FOR UPDATE
+    if status = succeeded → return            -- replay-safe
+    amount ≠ expected     → log, do not credit
+    UPDATE payment  SET succeeded, paid_at, raw
+    UPDATE booking  SET paid += amount, status = deposit_paid
+    INSERT notification_outbox (whatsapp, sms) -- same transaction
+  COMMIT
+```
+
+Two properties matter more than the code:
+
+1. **The ledger row is the lock.** A payment can only transition to `succeeded`
+   once, so the booking's `paid_pesewas` can never be credited twice, no matter
+   how many times Paystack retries.
+2. **The amount is re-derived server-side.** A webhook carries an amount, but it
+   is only used to *check* what was expected, never to set it.
+
+Refunds and partial balances are deliberately absent: they need a cancellation
+policy table before they can be coded honestly.
+
+## Notifications
+
+The outbox is the queue. Rows are written inside the payment transaction, so
+"deposit paid but no message" is not a reachable state.
+
+```
+notification_outbox (booking_id, event, channel) UNIQUE
+  → dispatcher claims with FOR UPDATE SKIP LOCKED
+  → WhatsApp template
+  → on success: cancel the sibling SMS row
+  → on permanent failure: release the sibling SMS row
+```
+
+- SMS is a fallback, not a duplicate: delayed 60 seconds, cancelled when
+  WhatsApp lands.
+- Retries use exponential backoff, five attempts, then `failed`.
+- Without credentials the providers log the exact rendered message, so the whole
+  path is testable locally.
+
 ## Availability
 
 Self-drive rentals reserve `rental_periods (vehicle_id, daterange)`. The migration adds:

@@ -7,6 +7,8 @@ import { DatabaseModule } from './db/database.module';
 import { BookingsModule } from './modules/bookings/bookings.module';
 import { CatalogModule } from './modules/catalog/catalog.module';
 import { HealthModule } from './modules/health/health.module';
+import { NotificationsModule } from './modules/notifications/notifications.module';
+import { PaymentsModule } from './modules/payments/payments.module';
 import { QuotesModule } from './modules/quotes/quotes.module';
 
 @Module({
@@ -22,6 +24,8 @@ import { QuotesModule } from './modules/quotes/quotes.module';
     CatalogModule,
     QuotesModule,
     BookingsModule,
+    PaymentsModule,
+    NotificationsModule,
   ],
   providers: [{ provide: APP_FILTER, useClass: AllExceptionsFilter }],
 })

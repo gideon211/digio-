@@ -52,11 +52,37 @@ export interface Quote {
 export interface Booking {
   ref: string;
   status: string;
-  totalPesewas: number;
-  depositDuePesewas: number;
+  product: string;
+  currency: string;
   pickup: string;
   dropoff: string;
   startsAt: string;
+  endsAt: string;
+  passengers: number;
+  bags: number;
+  flightNumber: string | null;
+  subtotalPesewas: number;
+  discountPesewas: number;
+  totalPesewas: number;
+  depositDuePesewas: number;
+  paidPesewas: number;
+  balancePesewas: number;
+  payment: { status: 'unpaid' | 'part_paid' | 'deposit_paid' | 'paid_in_full'; channel: string };
+  createdAt: string;
+}
+
+export interface Payment {
+  reference: string;
+  bookingRef: string;
+  kind: 'deposit' | 'balance';
+  amountPesewas: number;
+  currency: 'GHS';
+  channel: string;
+  status: 'initialized' | 'pending' | 'succeeded' | 'failed' | 'refunded';
+  authorizationUrl: string | null;
+  simulated: boolean;
+  paidAt: string | null;
+  createdAt: string;
 }
 
 export class ApiError extends Error {
@@ -121,6 +147,26 @@ export const api = {
       method: 'POST',
       body: JSON.stringify(input),
     }),
+
+  getBooking: (ref: string) => request<Booking>(`/bookings/${ref}`),
+
+  cancelBooking: (ref: string) =>
+    request<Booking>(`/bookings/${ref}/cancel`, { method: 'POST' }),
+
+  initializePayment: (input: {
+    bookingRef: string;
+    channel?: 'mobile_money' | 'card';
+    email?: string;
+    callbackUrl?: string;
+  }) =>
+    request<Payment & { email: string }>('/payments/initialize', {
+      method: 'POST',
+      body: JSON.stringify(input),
+    }),
+
+  getPayment: (reference: string) => request<Payment>(`/payments/${reference}`),
+
+  listPayments: (bookingRef: string) => request<Payment[]>(`/payments/booking/${bookingRef}`),
 };
 
 /** GH₵ formatting for display only — the API always returns integer pesewas. */
