@@ -71,7 +71,14 @@ export const discountType = pgEnum('discount_type', ['percent', 'fixed']);
 
 export const documentOwner = pgEnum('document_owner', ['driver', 'vehicle', 'customer']);
 
-export const enquiryKind = pgEnum('enquiry_kind', ['jet', 'yacht', 'corporate', 'wedding', 'long_term']);
+export const enquiryKind = pgEnum('enquiry_kind', [
+  'jet',
+  'yacht',
+  'corporate',
+  'wedding',
+  'long_term',
+  'city',
+]);
 
 /** A deposit secures the booking; the balance is collected later. */
 export const paymentKind = pgEnum('payment_kind', ['deposit', 'balance']);

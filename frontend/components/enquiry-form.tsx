@@ -9,6 +9,7 @@ const KINDS = [
   { value: 'long_term', label: 'Long-term hire' },
   { value: 'jet', label: 'Private jet' },
   { value: 'yacht', label: 'Yacht' },
+  { value: 'city', label: 'New city or partner' },
 ] as const;
 
 type Kind = (typeof KINDS)[number]['value'];
@@ -110,13 +111,13 @@ export function EnquiryForm() {
           />
         </label>
         <label className="field">
-          <span className="field-label">Mobile number</span>
+          <span className="field-label">Phone or WhatsApp</span>
           <input
             className="field-control tabular"
             required
             inputMode="tel"
             autoComplete="tel"
-            placeholder="024 123 4567"
+            placeholder="+233 24 123 4567"
             value={phone}
             onChange={(event) => setPhone(event.target.value)}
           />
@@ -140,7 +141,7 @@ export function EnquiryForm() {
           <textarea
             className="field-control resize-y"
             rows={3}
-            placeholder="Six staff, every Tuesday and Thursday, airport to Ridge."
+            placeholder="Six staff, every Tuesday and Thursday, airport to the office."
             value={message}
             onChange={(event) => setMessage(event.target.value)}
           />

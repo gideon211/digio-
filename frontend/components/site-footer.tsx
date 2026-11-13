@@ -8,13 +8,11 @@ const BOOK_LINKS = [
   { href: '/#fares', label: 'Published fares' },
 ] as const;
 
-const AREAS = [
-  'Kotoka International Airport',
-  'Airport City & Cantonments',
-  'Labone, Osu & Labadi',
-  'East Legon & Dzorwulu',
-  'Ridge & Spintex',
-  'Tema',
+const CITY_LINKS = [
+  { href: '/book', label: 'Accra, Ghana · live' },
+  { href: '/#cities', label: 'New cities' },
+  { href: '/#enquire', label: 'Partner with us' },
+  { href: '/#enquire', label: 'Request a city' },
 ] as const;
 
 export function SiteFooter() {
@@ -25,10 +23,10 @@ export function SiteFooter() {
           <div>
             <Brand />
             <p className="mt-4 max-w-xs text-body-sm text-hero-ink/70">
-              Late-model cars, vetted chauffeurs and one fixed price — no surge, ever.
+              Private chauffeurs and self-drive cars, one fixed price, in every city we serve.
             </p>
             <ul className="mt-5 flex flex-wrap gap-2">
-              {['Paystack', 'Mobile money', 'Card'].map((mark) => (
+              {['Card', 'Mobile money', 'Paystack'].map((mark) => (
                 <li key={mark} className="chip chip-on-dark">
                   {mark}
                 </li>
@@ -54,17 +52,24 @@ export function SiteFooter() {
             </ul>
           </nav>
 
-          <div>
+          <nav aria-label="Cities">
             <h2 className="text-caption font-semibold uppercase tracking-[0.1em] text-hero-ink/60">
-              We drive
+              Where we drive
             </h2>
-            <ul className="mt-4 grid gap-3 text-body-sm text-hero-ink/75">
-              {AREAS.map((area) => (
-                <li key={area}>{area}</li>
+            <ul className="mt-4 grid gap-3">
+              {CITY_LINKS.map((link) => (
+                <li key={link.label}>
+                  <Link
+                    href={link.href}
+                    className="text-body-sm text-hero-ink/75 underline-offset-4 transition-colors hover:text-hero-ink hover:underline"
+                  >
+                    {link.label}
+                  </Link>
+                </li>
               ))}
             </ul>
-            <p className="mt-4 text-caption text-hero-ink/55">Plus anywhere within about 40 km.</p>
-          </div>
+            <p className="mt-4 text-caption text-hero-ink/55">New cities open with local partners.</p>
+          </nav>
 
           <div>
             <h2 className="text-caption font-semibold uppercase tracking-[0.1em] text-hero-ink/60">
@@ -92,9 +97,9 @@ export function SiteFooter() {
         </div>
 
         <div className="mt-12 flex flex-col gap-2 border-t border-white/15 pt-6 text-caption text-hero-ink/55 sm:flex-row sm:items-center sm:justify-between">
-          <span>© {new Date().getFullYear()} Digio · Accra, Ghana</span>
+          <span>© {new Date().getFullYear()} Digio · Worldwide</span>
           <span className="flex flex-wrap gap-x-4 gap-y-1">
-            <span>Prices in GH₵ · Deposits secured by Paystack</span>
+            <span>Prices in local currency · Payments secured by Paystack</span>
             <Link href="/credits" className="underline-offset-4 hover:text-hero-ink hover:underline">
               Image credits
             </Link>

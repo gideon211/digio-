@@ -47,10 +47,13 @@ export function HomeRequest({ zones, fares }: { zones: Zone[]; fares: FareList |
 
   return (
     <form className="form-card" onSubmit={start}>
-      <h2 className="font-display text-display-sm text-ink">Where are you going?</h2>
+      <div className="flex items-start justify-between gap-3">
+        <h2 className="font-display text-display-sm text-ink">Where are you going?</h2>
+        <span className="chip chip-gold mt-0.5 shrink-0">Accra · live</span>
+      </div>
 
       <div className="mt-4 grid gap-3">
-        <Field label="Drop-off area">
+        <Field label="Destination area">
           <select
             className="field-control"
             value={selected}
@@ -103,7 +106,7 @@ export function HomeRequest({ zones, fares }: { zones: Zone[]; fares: FareList |
       {route && zone ? (
         <div className="mt-4 rounded-md bg-sunken px-3 py-3" aria-live="polite">
           <div className="flex flex-wrap items-baseline justify-between gap-x-3">
-            <span className="eyebrow">Airport fare</span>
+            <span className="eyebrow">Airport fare · Accra</span>
             <span className="text-caption text-muted">
               Kotoka → {zone.name} · one way, tolls in
             </span>
@@ -133,6 +136,12 @@ export function HomeRequest({ zones, fares }: { zones: Zone[]; fares: FareList |
         {ready
           ? 'Fixed price, tolls included. Free waiting: 60 minutes on flights, 10 minutes in town.'
           : 'The API could not be reached. Start it on port 4000 and reload.'}
+      </p>
+      <p className="mt-2 text-caption text-muted">
+        Booking in another city?{' '}
+        <a href="#cities" className="font-medium text-forest underline-offset-4 hover:underline">
+          Request yours →
+        </a>
       </p>
     </form>
   );

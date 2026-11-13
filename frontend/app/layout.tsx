@@ -20,11 +20,11 @@ const dmSans = DM_Sans({
 
 export const metadata: Metadata = {
   title: {
-    default: 'Digio — Arrive well. Every ride.',
+    default: 'Digio — Private chauffeur & car hire, worldwide',
     template: '%s · Digio',
   },
   description:
-    'Late-model cars, vetted chauffeurs, one fixed price. Airport transfers, chauffeur hire and self-drive rentals in Accra.',
+    'Late-model cars, vetted chauffeurs and one fixed price in every city we serve. Airport transfers, chauffeur hire and self-drive rentals, booked in minutes.',
 };
 
 export const viewport: Viewport = {
@@ -36,7 +36,7 @@ export const viewport: Viewport = {
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="en-GH" className={`${bricolage.variable} ${dmSans.variable}`}>
+    <html lang="en" className={`${bricolage.variable} ${dmSans.variable}`}>
       <body className="flex min-h-dvh flex-col">
         <SiteHeader />
         <div className="flex-1">{children}</div>

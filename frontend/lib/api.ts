@@ -256,7 +256,7 @@ export const api = {
   fares: () => request<FareList>('/catalog/fares'),
 
   sendEnquiry: (input: {
-    kind: 'jet' | 'yacht' | 'corporate' | 'wedding' | 'long_term';
+    kind: 'jet' | 'yacht' | 'corporate' | 'wedding' | 'long_term' | 'city';
     name: string;
     phone: string;
     email?: string;

@@ -170,7 +170,8 @@ export function FleetBand({ classes }: { classes: VehicleClass[] }) {
             </div>
 
             <p className="mt-4 text-caption text-hero-ink/60">
-              Capacity counts passengers only — your chauffeur sits outside that number.
+              Capacity counts passengers only — your chauffeur sits outside that number. Day rates
+              shown are for Accra.
             </p>
           </div>
         </div>

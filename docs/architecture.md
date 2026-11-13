@@ -230,11 +230,13 @@ default.
 
 Pages:
 
-- `/` — five acts: the price (hero fare board and the published fare list), the
-  car (one class at a time behind tabs, both the self-drive and the chauffeur
-  rate), how it works, where you watch it happen (the tracking preview), and
-  what to do when a calculator cannot answer you (enquiry form, FAQ, closing
-  CTA).
+- `/` — six acts: what we do (the modes strip), the price (hero fare board and
+  the published Accra fare list), the car (one class at a time behind tabs, both
+  the self-drive and the chauffeur rate), where we drive (live city, new cities,
+  request a city), how it works, and where you watch it happen (the tracking
+  preview) — closing on the enquiry form, FAQ and call to action. The brand
+  speaks to the world; only the fare list and the hero board name Accra, because
+  those are the prices the engine can actually honour.
 - `/book` — three steps: trip → choose your car (server-priced for all three
   classes) → confirm and pay.
 - `/rent` — two steps: car (dates, class, delivery, extras) → confirm.

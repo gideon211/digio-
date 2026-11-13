@@ -124,16 +124,16 @@ export function TrackingBand() {
                 aria-hidden
                 className="grid h-9 w-9 shrink-0 place-items-center rounded-pill bg-gold text-caption font-bold text-gold-ink"
               >
-                YB
+                MC
               </span>
               <div className="min-w-0">
-                <p className="truncate text-body-sm font-medium text-hero-ink">Yaw Boateng</p>
+                <p className="truncate text-body-sm font-medium text-hero-ink">Marcus Cole</p>
                 <p className="truncate text-caption text-hero-ink/65">
-                  4.91 · Toyota Prado · to Airport City
+                  4.91 · Toyota Prado · to the airport
                 </p>
               </div>
               <span className="ml-auto shrink-0 rounded-md border border-white/25 px-2 py-1 text-caption font-semibold tracking-[0.06em] text-hero-ink tabular">
-                GE 7734-24
+                DG 2481
               </span>
             </figcaption>
           </figure>

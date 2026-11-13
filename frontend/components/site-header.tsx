@@ -10,6 +10,7 @@ import { Brand } from './brand';
  */
 const LINKS = [
   { href: '/#fares', label: 'Fares' },
+  { href: '/#cities', label: 'Cities' },
   { href: '/rent', label: 'Hire a car' },
   { href: '/#how', label: 'How it works' },
 ] as const;

@@ -106,8 +106,9 @@ export function FareTable({ fares }: { fares: FareList }) {
       </div>
 
       <p className="mt-4 text-caption text-muted">
-        One way, tolls included, priced by the same engine that will price your booking. City-to-city
-        trips are priced the same way. Promo and member discounts come off these numbers at checkout.
+        Accra fares, one way, tolls included — priced by the same engine that will price your
+        booking. City-to-city trips are priced the same way. Promo and member discounts come off
+        these numbers at checkout.
       </p>
     </div>
   );
