@@ -1,6 +1,17 @@
 import { z } from 'zod';
 
 /**
+ * Optional vars ship blank in .env.example, and dotenv hands us "" for those
+ * lines. Zod's .optional() only tolerates undefined, so blanks have to be
+ * normalised to undefined before validation or the process refuses to boot on
+ * a perfectly valid dev setup.
+ */
+const blankToUndefined = (value: unknown) => (value === '' ? undefined : value);
+
+const optionalString = () => z.preprocess(blankToUndefined, z.string().optional());
+const optionalUrl = () => z.preprocess(blankToUndefined, z.string().url().optional());
+
+/**
  * Environment contract. Parsed once at boot — the process refuses to start
  * with an invalid or missing value rather than failing later at runtime.
  */
@@ -18,11 +29,11 @@ const envSchema = z.object({
   /** CORS origins, comma separated. Empty means "reflect request origin" in dev. */
   CORS_ORIGINS: z.string().default(''),
 
-  PAYSTACK_SECRET_KEY: z.string().optional(),
-  PAYSTACK_WEBHOOK_SECRET: z.string().optional(),
+  PAYSTACK_SECRET_KEY: optionalString(),
+  PAYSTACK_WEBHOOK_SECRET: optionalString(),
   PAYSTACK_API_URL: z.string().url().default('https://api.paystack.co'),
   /** Where Paystack returns the customer after checkout. */
-  PAYSTACK_CALLBACK_URL: z.string().url().optional(),
+  PAYSTACK_CALLBACK_URL: optionalUrl(),
   /** Used when a booking has no customer email; Paystack requires one. */
   PAYMENTS_FALLBACK_EMAIL: z.string().email().default('bookings@digiogh.com'),
 
@@ -31,27 +42,27 @@ const envSchema = z.object({
   /** Public base URL of this API, used for local checkout simulation. */
   API_PUBLIC_URL: z.string().url().default('http://localhost:4000'),
 
-  WHATSAPP_TOKEN: z.string().optional(),
-  WHATSAPP_PHONE_ID: z.string().optional(),
-  WHATSAPP_VERIFY_TOKEN: z.string().optional(),
+  WHATSAPP_TOKEN: optionalString(),
+  WHATSAPP_PHONE_ID: optionalString(),
+  WHATSAPP_VERIFY_TOKEN: optionalString(),
   WHATSAPP_API_VERSION: z.string().default('v21.0'),
-  WHATSAPP_TEMPLATE_NAME: z.string().optional(),
+  WHATSAPP_TEMPLATE_NAME: optionalString(),
   WHATSAPP_TEMPLATE_LANG: z.string().default('en'),
 
-  SMS_PROVIDER: z.enum(['hubtel', 'termii']).optional(),
-  SMS_API_KEY: z.string().optional(),
-  SMS_CLIENT_ID: z.string().optional(),
+  SMS_PROVIDER: z.preprocess(blankToUndefined, z.enum(['hubtel', 'termii']).optional()),
+  SMS_API_KEY: optionalString(),
+  SMS_CLIENT_ID: optionalString(),
   SMS_SENDER_ID: z.string().default('DIGIO'),
 
   NOTIFICATIONS_DISPATCH_ENABLED: z.string().default('true'),
 
   /** Live trip simulator. Defaults on outside production; set 'false' to disable. */
-  TRACKING_SIMULATION: z.enum(['true', 'false']).optional(),
+  TRACKING_SIMULATION: z.preprocess(blankToUndefined, z.enum(['true', 'false']).optional()),
 
-  S3_ENDPOINT: z.string().optional(),
-  S3_BUCKET: z.string().optional(),
-  S3_ACCESS_KEY_ID: z.string().optional(),
-  S3_SECRET_ACCESS_KEY: z.string().optional(),
+  S3_ENDPOINT: optionalString(),
+  S3_BUCKET: optionalString(),
+  S3_ACCESS_KEY_ID: optionalString(),
+  S3_SECRET_ACCESS_KEY: optionalString(),
 });
 
 export type Env = z.infer<typeof envSchema>;
