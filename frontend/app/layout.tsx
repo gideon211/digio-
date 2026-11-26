@@ -1,46 +1,49 @@
 import type { Metadata, Viewport } from 'next';
-import { Bricolage_Grotesque, DM_Sans } from 'next/font/google';
-import { SiteFooter } from '@/components/site-footer';
-import { SiteHeader } from '@/components/site-header';
+import { Kameron, Outfit } from 'next/font/google';
+import { MotionProvider } from '@/shared/motion/config/motion-config';
 import './globals.css';
 
-const bricolage = Bricolage_Grotesque({
+/*
+ * Kameron and Outfit are both variable fonts on Google Fonts, so the whole
+ * weight range arrives in one file and the browser interpolates between the
+ * weights the design actually uses rather than downloading a separate file
+ * per weight.
+ */
+const kameron = Kameron({
   subsets: ['latin'],
-  weight: ['500', '700'],
-  variable: '--font-bricolage',
+  weight: 'variable',
+  variable: '--font-kameron',
   display: 'swap',
 });
 
-const dmSans = DM_Sans({
+const outfit = Outfit({
   subsets: ['latin'],
-  weight: ['400', '500', '600'],
-  variable: '--font-dm-sans',
+  weight: 'variable',
+  variable: '--font-outfit',
   display: 'swap',
 });
 
 export const metadata: Metadata = {
   title: {
-    default: 'Digio — Private chauffeur & car hire, worldwide',
+    default: 'Digio | Luxury Rides, Just a Tap Away',
     template: '%s · Digio',
   },
   description:
-    'Late-model cars, vetted chauffeurs and one fixed price in every city we serve. Airport transfers, chauffeur hire and self-drive rentals, booked in minutes.',
+    'Ride in comfort and style with premium vehicles and professional chauffeurs, whenever and wherever you need them.',
 };
 
 export const viewport: Viewport = {
   width: 'device-width',
   initialScale: 1,
   viewportFit: 'cover',
-  themeColor: '#0f3d2e',
+  themeColor: '#181818',
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="en" className={`${bricolage.variable} ${dmSans.variable}`}>
-      <body className="flex min-h-dvh flex-col">
-        <SiteHeader />
-        <div className="flex-1">{children}</div>
-        <SiteFooter />
+    <html lang="en" className={`${kameron.variable} ${outfit.variable}`}>
+      <body>
+        <MotionProvider>{children}</MotionProvider>
       </body>
     </html>
   );
