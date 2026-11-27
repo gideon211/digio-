@@ -95,7 +95,7 @@ export function FleetSection() {
       </div>
 
       <Reveal
-        className="relative aspect-square w-full max-w-[382px] shrink-0 overflow-hidden rounded-pill lg:size-[512px]"
+        className="relative aspect-square w-full max-w-[382px] shrink-0 overflow-hidden rounded-pill lg:size-[512px] lg:max-w-none"
         distance={-56}
       >
         <AnimatePresence initial={false}>

@@ -22,10 +22,20 @@ const VARIANT_CLASS: Record<ButtonVariant, string> = {
   primary:
     'bg-white text-ink pl-4 pr-2 gap-2 rounded-pill h-14 font-sans font-normal text-lg leading-7',
   secondary:
-    'border-2 border-white text-white bg-transparent px-8 gap-2 rounded-pill h-14 font-sans font-normal text-lg leading-7',
+    'border-2 border-white text-white bg-transparent px-8 gap-2 rounded-pill h-14 font-sans font-normal text-lg leading-7 hover:border-ink hover:bg-ink',
   tertiary:
-    'border-2 border-white text-white bg-transparent px-8 gap-2 rounded-pill h-14 font-sans font-normal text-lg leading-7',
+    'border-2 border-white text-white bg-transparent px-8 gap-2 rounded-pill h-14 font-sans font-normal text-lg leading-7 hover:bg-white hover:text-ink',
 };
+
+/**
+ * Colour transitions between the default and hover variants.
+ *
+ * Figma swaps the whole variant with a 0.56s smart animate, so the fill and
+ * label cross into each other at that speed rather than snapping. Kept out of
+ * the variant map because every button shape shares it.
+ */
+const BUTTON_MOTION =
+  'transition-[background-color,border-color,color] duration-[560ms] ease-[cubic-bezier(0.22,1,0.36,1)]';
 
 /**
  * The dark disc and arrow that sit on the right of the primary button.
@@ -42,7 +52,7 @@ function ArrowChip() {
 
 export function Button({ children, variant = 'primary', href, className, onClick }: ButtonProps) {
   const base = VARIANT_CLASS[variant];
-  const composed = `inline-flex items-center ${base} ${className ?? ''}`;
+  const composed = `inline-flex items-center ${BUTTON_MOTION} ${base} ${className ?? ''}`;
 
   if (href) {
     return (
