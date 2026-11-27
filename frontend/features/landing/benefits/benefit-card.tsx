@@ -13,24 +13,30 @@ interface BenefitCardProps {
  * copy runs. The design does the same thing, which is why the four cards
  * line up even though their descriptions differ in length.
  *
- * The card lifts and the photograph creeps in slightly on hover. Both are
- * transforms, so nothing reflows and the four cards stay on one line.
+ * On hover the photograph creeps in and the copy panel turns ink with white
+ * text, which is the frame's hover variant. The panel sits under the
+ * photograph rather than over it, so the white top half of the card stays
+ * white and only the text band darkens.
  */
 export function BenefitCard({ card }: BenefitCardProps) {
   return (
-    <article className="group flex aspect-[256/290] flex-col overflow-hidden rounded-tile border border-line bg-white transition-transform duration-500 ease-out hover:-translate-y-1.5">
+    <article className="group flex aspect-[256/290] flex-col overflow-hidden rounded-tile border border-line bg-white">
       <div className="relative min-h-0 flex-1 overflow-hidden">
         <Image
           src={card.image}
           alt={card.alt}
           fill
           sizes="(max-width: 768px) 80vw, 25vw"
-          className="object-cover transition-transform duration-700 ease-out group-hover:scale-[1.06]"
+          className="object-cover transition-transform duration-[560ms] ease-[cubic-bezier(0.22,1,0.36,1)] group-hover:scale-[1.07] motion-reduce:transition-none"
         />
       </div>
-      <div className="flex flex-col justify-center gap-4 p-4">
-        <h3 className="font-display text-display-md font-semibold">{card.title}</h3>
-        <p className="text-body-md text-ink/72">{card.body}</p>
+      <div className="flex flex-col justify-center gap-4 p-4 transition-colors duration-[560ms] ease-[cubic-bezier(0.22,1,0.36,1)] group-hover:bg-ink motion-reduce:transition-none">
+        <h3 className="font-display text-display-md font-semibold transition-colors duration-[560ms] group-hover:text-white motion-reduce:transition-none">
+          {card.title}
+        </h3>
+        <p className="text-body-md text-ink/72 transition-colors duration-[560ms] group-hover:text-white motion-reduce:transition-none">
+          {card.body}
+        </p>
       </div>
     </article>
   );

@@ -41,6 +41,12 @@ interface RideWindow {
   shape: typeof WINDOW_LOW | typeof WINDOW_HIGH;
 }
 
+/**
+ * The five cars are separate renders of the same studio scene. Each one is
+ * cropped to a narrow window so the five together read as a single long car.
+ * The frame uses the same collage at every width: 1280px on desktop and the
+ * 382px content column on a phone, where it simply scales down.
+ */
 const RIDE_WINDOWS: RideWindow[] = [
   { src: '/img/ride-1.png', left: '0.1%', imageTop: '-18.01%', shape: WINDOW_LOW },
   { src: '/img/ride-2.png', left: '-105.14%', imageTop: '3.32%', shape: WINDOW_HIGH },
@@ -51,10 +57,10 @@ const RIDE_WINDOWS: RideWindow[] = [
 
 /**
  * The size of the vertical drift the whole collage makes across its scroll
- * travel. Big enough to feel the page moving, small enough that the car never
- * leaves the band.
+ * travel, as a percentage of its own height. Percent rather than pixels so a
+ * phone collage and the desktop canvas drift by the same visible amount.
  */
-const COLLAGE_DRIFT = 48;
+const COLLAGE_DRIFT = 6;
 
 const ENTRY_SPRING = { type: 'spring', bounce: 0, duration: 0.75 } as const;
 const HOVER_SPRING = { type: 'spring', bounce: 0, duration: 0.5 } as const;
@@ -66,7 +72,7 @@ export function ShowcaseSection() {
 
   const { scrollYProgress } = useScroll({ target: collageRef, offset: ['start end', 'end start'] });
   const travel = reduced ? 0 : COLLAGE_DRIFT;
-  const y = useTransform(scrollYProgress, [0, 1], [travel, -travel]);
+  const y = useTransform(scrollYProgress, [0, 1], [`${travel}%`, `${-travel}%`]);
 
   return (
     <section className="flex flex-col items-center gap-12 overflow-hidden bg-ink p-6 lg:px-8 lg:py-32">

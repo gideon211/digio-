@@ -35,7 +35,7 @@ export function BrandsBand() {
         </div>
       </Parallax>
 
-      <div className="absolute left-6 top-8 flex w-[382px] flex-col gap-4 text-center text-white lg:left-8 lg:w-[537px] lg:text-left">
+      <div className="absolute inset-x-6 top-8 flex flex-col gap-4 text-center text-white lg:inset-x-auto lg:left-8 lg:w-[537px] lg:text-left">
         <Reveal distance={24}>
           <h2 className="font-display text-[48px] font-bold leading-[56px] tracking-[-0.24px] lg:text-[56px] lg:leading-[64px] lg:tracking-[-0.56px]">
             {BRANDS.title}
@@ -46,7 +46,7 @@ export function BrandsBand() {
         </Reveal>
       </div>
 
-      <div className="absolute inset-x-0 bottom-0 py-8">
+      <div className="absolute inset-x-0 bottom-0 pb-12 pt-8">
         <BrandMarquee />
       </div>
     </section>

@@ -64,7 +64,7 @@ export function Hero() {
       </motion.header>
 
       <motion.div
-        className="absolute left-1/2 top-[calc(50%-202px)] flex w-[382px] -translate-x-1/2 -translate-y-1/2 flex-col items-center justify-center gap-6 text-center lg:top-[calc(50%-234px)] lg:w-[739px]"
+        className="absolute left-1/2 top-[calc(50%-202px)] flex w-[min(382px,calc(100%-3rem))] -translate-x-1/2 -translate-y-1/2 flex-col items-center justify-center gap-6 text-center lg:top-[calc(50%-234px)] lg:w-[739px]"
         initial={{ opacity: 0, scale: 1.2 }}
         animate={{ opacity: 1, scale: 1 }}
         transition={SPRING}
