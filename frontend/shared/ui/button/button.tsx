@@ -1,5 +1,6 @@
 import Image from 'next/image';
 import type { ReactNode } from 'react';
+import { vibrateOnTap } from '@/shared/ui/haptic/haptic';
 
 export type ButtonVariant = 'primary' | 'secondary' | 'tertiary';
 
@@ -74,11 +75,16 @@ function ArrowChip() {
 
 export function Button({ children, variant = 'primary', href, className, onClick }: ButtonProps) {
   const base = VARIANT_CLASS[variant];
-  const composed = `group inline-flex items-center active:scale-[0.98] ${BUTTON_MOTION} ${base} ${className ?? ''}`;
+  const composed = `group inline-flex items-center active:scale-[0.98] focus-ring ${BUTTON_MOTION} ${base} ${className ?? ''}`;
+
+  const handleClick = () => {
+    vibrateOnTap();
+    onClick?.();
+  };
 
   if (href) {
     return (
-      <a href={href} className={composed} onClick={onClick}>
+      <a href={href} className={composed} onClick={handleClick}>
         <span>{children}</span>
         {variant === 'primary' && <ArrowChip />}
       </a>
@@ -86,7 +92,7 @@ export function Button({ children, variant = 'primary', href, className, onClick
   }
 
   return (
-    <button type="button" className={composed} onClick={onClick}>
+    <button type="button" className={composed} onClick={handleClick}>
       <span>{children}</span>
       {variant === 'primary' && <ArrowChip />}
     </button>

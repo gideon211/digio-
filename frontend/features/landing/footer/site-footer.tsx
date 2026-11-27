@@ -46,7 +46,7 @@ export function SiteFooter() {
                 key={social.alt}
                 href="#"
                 aria-label={social.alt}
-                className="grid size-10 place-items-center rounded-pill bg-surface transition-transform duration-300 ease-out hover:-translate-y-0.5 active:scale-95"
+                className="grid size-10 place-items-center rounded-pill bg-surface transition-transform duration-300 ease-out hover:-translate-y-0.5 active:scale-95 focus-ring"
               >
                 <Image
                   src={social.src}
@@ -64,7 +64,7 @@ export function SiteFooter() {
           <p className="font-semibold">Links</p>
           <div className="flex flex-col gap-2 font-normal">
             {FOOTER_LINKS.map((link) => (
-              <a key={link.label} href={link.href} className="transition-opacity hover:opacity-70 active:opacity-50">
+              <a key={link.label} href={link.href} className="transition-opacity hover:opacity-70 active:opacity-50 focus-ring">
                 {link.label}
               </a>
             ))}
@@ -95,7 +95,7 @@ export function SiteFooter() {
         <p>{FOOTER.copyright}</p>
         <div className="flex items-start gap-2">
           {FOOTER.legalLinks.map((link) => (
-            <a key={link} href="#" className="underline transition-opacity hover:opacity-70 active:opacity-50">
+            <a key={link} href="#" className="underline transition-opacity hover:opacity-70 active:opacity-50 focus-ring">
               {link}
             </a>
           ))}

@@ -3,6 +3,7 @@
 import { AnimatePresence, motion } from 'motion/react';
 import type { FaqEntry } from '@/features/landing/model/landing-copy';
 import { Icon } from '@/shared/ui/icon/icon';
+import { vibrateOnTap } from '@/shared/ui/haptic/haptic';
 
 interface FaqItemProps {
   entry: FaqEntry;
@@ -27,8 +28,11 @@ export function FaqItem({ entry, open, onToggle }: FaqItemProps) {
     <button
       type="button"
       aria-expanded={open}
-      onClick={onToggle}
-      className="flex w-full items-center justify-between gap-4 overflow-hidden rounded-pill bg-ink-soft p-4 text-left transition-colors duration-300 hover:bg-white/5 active:bg-white/10 lg:gap-8 lg:p-6"
+      onClick={() => {
+        vibrateOnTap();
+        onToggle();
+      }}
+      className="flex w-full items-center justify-between gap-4 overflow-hidden rounded-pill bg-ink-soft p-4 text-left transition-colors duration-300 hover:bg-white/5 active:bg-white/10 focus-ring lg:gap-8 lg:p-6"
     >
       <span
         className={`flex flex-col gap-y-2 overflow-hidden lg:gap-y-[23px] ${open ? '' : 'lg:h-8'}`}

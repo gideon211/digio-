@@ -4,6 +4,7 @@ import Image from 'next/image';
 import { AnimatePresence, motion, useReducedMotion, type Transition } from 'motion/react';
 import { useState } from 'react';
 import { FLEET_SLIDES } from '@/features/landing/model/landing-copy';
+import { vibrateOnTap } from '@/shared/ui/haptic/haptic';
 import { Button } from '@/shared/ui/button/button';
 import { Icon } from '@/shared/ui/icon/icon';
 import { Reveal } from '@/shared/ui/reveal/reveal';
@@ -148,9 +149,12 @@ export function FleetSection() {
         <div className="flex items-center gap-6">
           <button
             type="button"
-            onClick={() => move(-1)}
+            onClick={() => {
+              vibrateOnTap();
+              move(-1);
+            }}
             aria-label="Previous vehicle"
-            className="group grid size-14 place-items-center rounded-pill border-2 border-white text-white transition-[color,background-color,transform] duration-300 hover:scale-105 hover:bg-white active:scale-95"
+            className="group grid size-14 place-items-center rounded-pill border-2 border-white text-white transition-[color,background-color,transform] duration-300 hover:scale-105 hover:bg-white active:scale-95 focus-ring"
           >
             <Icon
               name="chevron-left"
@@ -159,9 +163,12 @@ export function FleetSection() {
           </button>
           <button
             type="button"
-            onClick={() => move(1)}
+            onClick={() => {
+              vibrateOnTap();
+              move(1);
+            }}
             aria-label="Next vehicle"
-            className="group grid size-14 place-items-center rounded-pill border-2 border-white text-white transition-[color,background-color,transform] duration-300 hover:scale-105 hover:bg-white active:scale-95"
+            className="group grid size-14 place-items-center rounded-pill border-2 border-white text-white transition-[color,background-color,transform] duration-300 hover:scale-105 hover:bg-white active:scale-95 focus-ring"
           >
             <Icon
               name="chevron-right"

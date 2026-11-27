@@ -69,12 +69,26 @@
   --breakpoint-xl: 1280px;
 }
 
+/*
+ * Keyboard focus.
+ *
+ * Every control sits on an ink surface, so the same white outline works on
+ * the header, the carousel, the FAQ and the footer. Pointer users don't see
+ * it because it only fires on :focus-visible, which is also why the offset
+ * can be generous without adding visual noise.
+ */
+@utility focus-ring {
+  &:focus-visible {
+    outline: 2px solid var(--color-white);
+    outline-offset: 2px;
+  }
+}
+
 @layer base {
   html {
     scroll-behavior: smooth;
     -webkit-text-size-adjust: 100%;
   }
-
   @media (prefers-reduced-motion: reduce) {
     html {
       scroll-behavior: auto;
