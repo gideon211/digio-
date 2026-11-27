@@ -1,7 +1,8 @@
 'use client';
 
-import { motion, useReducedMotion, useScroll, useTransform } from 'motion/react';
+import { motion, useScroll, useTransform } from 'motion/react';
 import { useRef, type ReactNode } from 'react';
+import { useSafeReducedMotion } from '@/shared/motion/reduced/use-reduced-motion';
 
 interface ParallaxProps {
   children: ReactNode;
@@ -22,13 +23,13 @@ interface ParallaxProps {
  * Screens using the wrapper must give it more height than the image so the
  * drift never exposes an edge.
  *
- * Reduced-motion visitors get the same element and layout with a zero travel,
- * which is why the preference changes the transform range rather than the
- * markup. Swapping the markup would make the server and client disagree.
+ * Reduced-motion visitors get the same element and layout with a zero travel.
+ * The preference is read through the SSR-safe hook so the first client render
+ * matches the server markup instead of triggering a hydration mismatch.
  */
 export function Parallax({ children, className, distance = 48 }: ParallaxProps) {
   const ref = useRef<HTMLDivElement>(null);
-  const reduced = useReducedMotion();
+  const reduced = useSafeReducedMotion();
   const { scrollYProgress } = useScroll({ target: ref, offset: ['start end', 'end start'] });
   const travel = reduced ? 0 : distance;
   const y = useTransform(scrollYProgress, [0, 1], [travel, -travel]);

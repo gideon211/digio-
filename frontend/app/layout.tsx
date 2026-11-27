@@ -1,6 +1,7 @@
 import type { Metadata, Viewport } from 'next';
 import { Kameron, Outfit } from 'next/font/google';
 import { MotionProvider } from '@/shared/motion/config/motion-config';
+import { PageLoader } from '@/shared/ui/page-loader/page-loader';
 import './globals.css';
 
 /*
@@ -43,7 +44,10 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
   return (
     <html lang="en" className={`${kameron.variable} ${outfit.variable}`}>
       <body>
-        <MotionProvider>{children}</MotionProvider>
+        <MotionProvider>
+          <PageLoader />
+          {children}
+        </MotionProvider>
       </body>
     </html>
   );

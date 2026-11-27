@@ -1,8 +1,9 @@
 'use client';
 
 import Image from 'next/image';
-import { motion, useReducedMotion, useScroll, useTransform } from 'motion/react';
+import { motion, useScroll, useTransform } from 'motion/react';
 import { useRef, useState } from 'react';
+import { useSafeReducedMotion } from '@/shared/motion/reduced/use-reduced-motion';
 import { SHOWCASE } from '@/features/landing/model/landing-copy';
 import { Reveal } from '@/shared/ui/reveal/reveal';
 
@@ -67,7 +68,7 @@ const HOVER_SPRING = { type: 'spring', bounce: 0, duration: 0.5 } as const;
 
 export function ShowcaseSection() {
   const collageRef = useRef<HTMLDivElement>(null);
-  const reduced = useReducedMotion();
+  const reduced = useSafeReducedMotion();
   const [hovered, setHovered] = useState<number | null>(null);
 
   const { scrollYProgress } = useScroll({ target: collageRef, offset: ['start end', 'end start'] });
