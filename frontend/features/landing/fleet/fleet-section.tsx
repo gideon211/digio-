@@ -150,7 +150,7 @@ export function FleetSection() {
             type="button"
             onClick={() => move(-1)}
             aria-label="Previous vehicle"
-            className="group grid size-14 place-items-center rounded-pill border-2 border-white text-white transition-[color,background-color,transform] duration-300 hover:scale-105 hover:bg-white"
+            className="group grid size-14 place-items-center rounded-pill border-2 border-white text-white transition-[color,background-color,transform] duration-300 hover:scale-105 hover:bg-white active:scale-95"
           >
             <Icon
               name="chevron-left"
@@ -161,7 +161,7 @@ export function FleetSection() {
             type="button"
             onClick={() => move(1)}
             aria-label="Next vehicle"
-            className="group grid size-14 place-items-center rounded-pill border-2 border-white text-white transition-[color,background-color,transform] duration-300 hover:scale-105 hover:bg-white"
+            className="group grid size-14 place-items-center rounded-pill border-2 border-white text-white transition-[color,background-color,transform] duration-300 hover:scale-105 hover:bg-white active:scale-95"
           >
             <Icon
               name="chevron-right"

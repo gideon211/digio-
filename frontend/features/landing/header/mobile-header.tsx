@@ -41,7 +41,7 @@ export function MobileHeader() {
           aria-expanded={open}
           aria-label={open ? 'Close menu' : 'Open menu'}
           onClick={() => setOpen((value) => !value)}
-          className="grid h-14 w-14 place-items-center rounded-pill"
+          className="grid h-14 w-14 place-items-center rounded-pill transition-[background-color,transform] duration-300 hover:bg-white/10 active:scale-95"
         >
           <Image
             src={open ? '/img/menu-close.svg' : '/img/menu-open.svg'}
@@ -68,7 +68,7 @@ export function MobileHeader() {
                   key={link.label}
                   href={link.href}
                   onClick={() => setOpen(false)}
-                  className={`flex items-center p-4 text-lg font-semibold leading-7 text-white ${
+                  className={`flex items-center p-4 text-lg font-semibold leading-7 text-white transition-opacity hover:opacity-100 active:opacity-50 ${
                     index === 0 ? '' : 'opacity-72'
                   }`}
                 >

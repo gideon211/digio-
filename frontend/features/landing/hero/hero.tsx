@@ -117,16 +117,16 @@ export function Hero() {
 function HeroNav() {
   return (
     <nav className="flex items-center gap-10 text-lg font-semibold leading-7 text-white">
-      <a href="#top" className="transition-opacity hover:opacity-70">
+      <a href="#top" className="transition-opacity hover:opacity-70 active:opacity-50">
         Home
       </a>
-      <a href="#fleet" className="opacity-72 transition-opacity hover:opacity-100">
+      <a href="#fleet" className="opacity-72 transition-opacity hover:opacity-100 active:opacity-50">
         Our Fleet
       </a>
-      <a href="#about" className="opacity-72 transition-opacity hover:opacity-100">
+      <a href="#about" className="opacity-72 transition-opacity hover:opacity-100 active:opacity-50">
         About Us
       </a>
-      <a href="#contact" className="opacity-72 transition-opacity hover:opacity-100">
+      <a href="#contact" className="opacity-72 transition-opacity hover:opacity-100 active:opacity-50">
         Contact Us
       </a>
     </nav>

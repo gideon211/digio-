@@ -38,21 +38,43 @@ const BUTTON_MOTION =
   'transition-[background-color,border-color,color] duration-[560ms] ease-[cubic-bezier(0.22,1,0.36,1)]';
 
 /**
+ * The arrow travel used by the white pill's hover state.
+ */
+const ARROW_SLIDE =
+  'transition-transform duration-[560ms] ease-[cubic-bezier(0.22,1,0.36,1)]';
+
+/**
  * The dark disc and arrow that sit on the right of the primary button.
  *
- * The arrow artwork already points right, so it is drawn as authored.
+ * On hover the settled arrow leaves through the right of the disc while the
+ * incoming arrow enters from the left. Figma pairs the two arrows in the same
+ * frame and lets the disc clip them, which is why nothing fades: a single
+ * arrow moving right would simply vanish.
  */
 function ArrowChip() {
   return (
-    <span className="grid size-8 shrink-0 place-items-center rounded-pill bg-ink">
-      <Image src="/img/arrow-double.svg" alt="" width={18} height={16} className="h-4 w-[18px]" />
+    <span className="grid size-8 shrink-0 place-items-center overflow-hidden rounded-pill bg-ink">
+      <Image
+        src="/img/arrow-double.svg"
+        alt=""
+        width={18}
+        height={16}
+        className={`col-start-1 row-start-1 h-4 w-[18px] ${ARROW_SLIDE} group-hover:translate-x-8`}
+      />
+      <Image
+        src="/img/arrow-double.svg"
+        alt=""
+        width={18}
+        height={16}
+        className={`col-start-1 row-start-1 h-4 w-[18px] -translate-x-8 ${ARROW_SLIDE} group-hover:translate-x-0`}
+      />
     </span>
   );
 }
 
 export function Button({ children, variant = 'primary', href, className, onClick }: ButtonProps) {
   const base = VARIANT_CLASS[variant];
-  const composed = `inline-flex items-center ${BUTTON_MOTION} ${base} ${className ?? ''}`;
+  const composed = `group inline-flex items-center active:scale-[0.98] ${BUTTON_MOTION} ${base} ${className ?? ''}`;
 
   if (href) {
     return (
